@@ -1,0 +1,155 @@
+.ll-page {
+    min-height: 100vh;
+    background: #f5f7fb;
+    display: flex;
+    justify-content: center;
+    padding: 20px 14px 40px;
+}
+
+.ll-card {
+    width: 100%;
+    max-width: 460px;
+    height: fit-content;
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 26px 18px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.ll-back {
+    display: inline-block;
+    color: #7c3aed;
+    font-weight: 600;
+    text-decoration: none;
+    margin-bottom: 14px;
+}
+
+.ll-card h1 {
+    font-size: 24px;
+    margin-bottom: 6px;
+}
+
+.ll-text {
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.ll-status {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.ll-ok {
+    background: #dcfce7;
+    color: #166534;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 14px;
+}
+
+.ll-warn {
+    background: #fef3c7;
+    color: #92400e;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 14px;
+}
+
+.ll-map-link {
+    display: block;
+    padding: 14px;
+    margin-bottom: 10px;
+    border-radius: 14px;
+    background: #f3e8ff;
+    color: #7c3aed;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+}
+
+.ll-get {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    background: #7c3aed;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.ll-get:disabled {
+    opacity: 0.6;
+}
+
+.ll-card h2 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.ll-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 0;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.ll-contact:last-child {
+    border-bottom: none;
+}
+
+.ll-contact-name {
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.ll-contact-phone {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.ll-contact-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.ll-contact-buttons a {
+    flex: 1;
+    padding: 11px 6px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.ll-whatsapp { background: #16a34a; }
+.ll-sms      { background: #7c3aed; }
+.ll-tel      { background: #374151; }
+
+.ll-empty {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.ll-empty a {
+    color: #7c3aed;
+    font-weight: 600;
+}
+
+.ll-note {
+    margin-top: 20px;
+    padding: 12px;
+    background: #f3f4f6;
+    border-radius: 12px;
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.5;
+}

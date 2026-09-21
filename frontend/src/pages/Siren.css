@@ -1,0 +1,79 @@
+.siren-page {
+    min-height: 100vh;
+    background: #f5f7fb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px;
+    text-align: center;
+}
+
+.siren-on {
+    animation: siren-flash 1s infinite;
+}
+
+@keyframes siren-flash {
+    0%,
+    100% {
+        background: #dc2626;
+    }
+    50% {
+        background: #fecaca;
+    }
+}
+
+.siren-back {
+    align-self: flex-start;
+    color: #7c3aed;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.siren-on .siren-back {
+    color: #111827;
+}
+
+.siren-page h1 {
+    margin-top: 30px;
+    font-size: 26px;
+}
+
+.siren-text {
+    max-width: 340px;
+    margin-top: 8px;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.siren-on .siren-text {
+    color: #111827;
+}
+
+.siren-button {
+    width: 200px;
+    height: 200px;
+    margin: 40px 0 20px;
+    border: 10px solid #eee7ff;
+    border-radius: 50%;
+    background: #dc2626;
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 700;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+}
+
+.siren-button-on {
+    background: #111827;
+    border-color: #ffffff;
+}
+
+.siren-note {
+    max-width: 340px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.siren-on .siren-note {
+    color: #111827;
+}

@@ -2,6 +2,15 @@ import { Navigate, useNavigate } from "react-router-dom";
 import "../App.css";
 import dhairyaLogo from "../assets/logo.png";
 
+const features = [
+    { icon: "🛡️", title: "Safety Check", text: "Check your safety", path: "/safety-check" },
+    { icon: "🚗", title: "Safe Travel", text: "Track your journey", path: "/safe-travel" },
+    { icon: "📍", title: "Live Location", text: "Share your location", path:"/live-location"},
+    { icon: "👥", title: "Trusted Circle", text: "Your trusted people", path: "/contacts" },
+    { icon: "📞", title: "Fake Call", text: "Get a simulated call", path: "/fake-call" },
+    { icon: "🔊", title: "Emergency Siren", text: "Activate siren", path: "/siren" },
+];
+
 function Home() {
     const navigate = useNavigate();
 
@@ -50,7 +59,7 @@ function Home() {
 
                 {/* SOS Button */}
                 <section className="sos-section">
-                    <button className="sos-button">
+                    <button className="sos-button" onClick={() => navigate("/sos")}>
                         <span className="sos-icon">!</span>
                         <span>SOS</span>
                         <small>Emergency</small>
@@ -59,61 +68,40 @@ function Home() {
 
                 {/* Features */}
                 <section className="feature-grid">
-                    <button className="feature-card">
-                        <div className="feature-icon">🛡️</div>
-                        <h3>Safety Check</h3>
-                        <p>Check your safety</p>
-                    </button>
-
-                    <button className="feature-card">
-                        <div className="feature-icon">🚗</div>
-                        <h3>Safe Travel</h3>
-                        <p>Track your journey</p>
-                    </button>
-
-                    <button className="feature-card">
-                        <div className="feature-icon">📍</div>
-                        <h3>Live Location</h3>
-                        <p>Share your location</p>
-                    </button>
-
-                    <button className="feature-card">
-                        <div className="feature-icon">👥</div>
-                        <h3>Trusted Circle</h3>
-                        <p>Your trusted people</p>
-                    </button>
-
-                    <button className="feature-card">
-                        <div className="feature-icon">📞</div>
-                        <h3>Fake Call</h3>
-                        <p>Get a simulated call</p>
-                    </button>
-
-                    <button className="feature-card">
-                        <div className="feature-icon">🔊</div>
-                        <h3>Emergency Siren</h3>
-                        <p>Activate siren</p>
-                    </button>
+                    {features.map((f) => (
+                        <button
+                            className="feature-card"
+                            key={f.title}
+                            onClick={() => f.path && navigate(f.path)}
+                        >
+                            <div className="feature-icon">{f.icon}</div>
+                            <h3>{f.title}</h3>
+                            <p>{f.text}</p>
+                        </button>
+                    ))}
                 </section>
             </main>
 
             {/* Bottom Navigation */}
             <nav className="bottom-nav">
-                <button>
+                <button onClick={() => navigate("/")}>
                     <span>⌂</span>
                     <small>Home</small>
                 </button>
-                <button>
+
+                <button onClick={() => navigate("/live-location")}>
                     <span>📍</span>
                     <small>Location</small>
                 </button>
-                <button className="nav-sos">
+                <button className="nav-sos" onClick={() => navigate("/sos")}>
                     <span>!</span>
                 </button>
-                <button>
+
+                <button onClick={() => navigate("/contacts")}>
                     <span>👥</span>
                     <small>Contacts</small>
                 </button>
+
                 <button>
                     <span>⚙️</span>
                     <small>Settings</small>
