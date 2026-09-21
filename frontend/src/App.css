@@ -232,3 +232,17 @@
     font-size: 38px;
   }
 }
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logout-btn {
+  background: #f3e8ff;
+  color: #7c3aed;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-weight: 600;
+}
