@@ -1,5 +1,6 @@
 package com.dhairya.backend.controller;
 
+import com.dhairya.backend.model.LoginRequest;
 import com.dhairya.backend.model.RegisterRequest;
 import com.dhairya.backend.model.User;
 import com.dhairya.backend.repository.UserRepository;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -54,5 +56,35 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "success", true,
                 "message", "User registered successfully"));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest req) {
+
+        if (req.email() == null || req.email().isBlank()
+                || req.password() == null || req.password().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", "Email and password are required"));
+        }
+
+        Optional<User> found = userRepository.findByEmail(req.email().trim().toLowerCase());
+
+        if (found.isEmpty() || !encoder.matches(req.password(), found.get().getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "success", false,
+                    "message", "Invalid email or password"));
+        }
+
+        User user = found.get();
+
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Login successful",
+                "user", Map.of(
+                        "userId", user.getUserId(),
+                        "name", user.getName(),
+                        "email", user.getEmail(),
+                        "phone", user.getPhone() == null ? "" : user.getPhone())));
     }
 }
