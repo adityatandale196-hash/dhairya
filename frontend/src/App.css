@@ -1,0 +1,234 @@
+.app {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+/* TOP BAR */
+
+.top-bar {
+  background: #ffffff;
+  padding: 16px 18px;
+  border-bottom: 1px solid #e8ebf0;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.brand h1 {
+  font-size: 22px;
+  margin-bottom: 2px;
+}
+
+.brand p {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+/* MAIN */
+
+.home-container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 18px;
+}
+
+/* WELCOME */
+
+.welcome-card {
+  background: #7c3aed;
+  color: white;
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 22px;
+}
+
+.welcome-logo {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  margin: 0 auto 14px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 8px;
+}
+
+.small-text {
+  font-size: 13px;
+  opacity: 0.85;
+  margin-bottom: 8px;
+}
+
+.welcome-card h2 {
+  font-size: 30px;
+  line-height: 1.12;
+  margin-bottom: 12px;
+}
+
+.welcome-description {
+  font-size: 14px;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+/* SOS */
+
+.sos-section {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 26px;
+}
+
+.sos-button {
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  border: 12px solid #eee7ff;
+  background: #dc2626;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
+}
+
+.sos-icon {
+  font-size: 30px;
+  font-weight: bold;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: white;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.sos-button span:last-of-type {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.sos-button small {
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+/* FEATURES */
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.feature-card {
+  background: white;
+  border-radius: 18px;
+  padding: 18px 14px;
+  text-align: left;
+  min-height: 130px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+  border: 1px solid #edf0f4;
+}
+
+.feature-icon {
+  font-size: 25px;
+  margin-bottom: 12px;
+}
+
+.feature-card h3 {
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+
+.feature-card p {
+  color: #6b7280;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* BOTTOM NAVIGATION */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 68px;
+  background: white;
+  border-top: 1px solid #e8ebf0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 50;
+}
+
+.bottom-nav button {
+  background: none;
+  border: none;
+  color: #6b7280;
+  min-width: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.bottom-nav button span {
+  font-size: 19px;
+}
+
+.bottom-nav button small {
+  font-size: 10px;
+}
+
+.bottom-nav .nav-sos {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #dc2626;
+  color: white;
+  margin-top: -25px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.nav-sos span {
+  font-size: 24px !important;
+  font-weight: bold;
+}
+
+/* TABLET / DESKTOP */
+
+@media (min-width: 768px) {
+  .home-container {
+    padding: 28px;
+  }
+
+  .feature-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .welcome-card h2 {
+    font-size: 38px;
+  }
+}
