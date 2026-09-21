@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { apiRequest } from "../services/api";
 import { getLocation, mapLinkFor, whatsappLink, smsLink } from "../services/share";
@@ -21,6 +21,7 @@ function ContactList({ contacts, message }) {
             </p>
         );
     }
+
     return (
         <div>
             {contacts.map((c) => (
@@ -45,6 +46,7 @@ function ContactList({ contacts, message }) {
 
 function SafeTravel() {
     const navigate = useNavigate();
+
     const stored = localStorage.getItem("dhairyaUser");
     const user = stored ? JSON.parse(stored) : null;
 
@@ -55,19 +57,13 @@ function SafeTravel() {
     const [countdown, setCountdown] = useState(0);
     const [location, setLocation] = useState(null);
     const [contacts, setContacts] = useState([]);
+    const [tripRecord, setTripRecord] = useState(null);
     const [warning, setWarning] = useState("");
     const [attempt, setAttempt] = useState(0);
-    const destRef = useRef(destination);
 
     const travelSeconds = demo ? 15 : minutes * 60;
     const responseSeconds = demo ? 10 : 60;
 
-    // Keep destRef in sync so the alert message always has the destination
-    useEffect(() => {
-        destRef.current = destination;
-    }, [destination]);
-
-    // Main countdown timer
     useEffect(() => {
         if (!TIMED_PHASES.includes(phase)) return;
         if (countdown <= 0) {
@@ -78,9 +74,8 @@ function SafeTravel() {
         return () => clearTimeout(timer);
     }, [phase, countdown]);
 
-    // Vibrate when asking a question
     useEffect(() => {
-        if (["ask1", "ask2", "ask3"].includes(phase) && navigator.vibrate) {
+        if ((phase === "ask1" || phase === "ask2" || phase === "ask3") && navigator.vibrate) {
             navigator.vibrate([300, 200, 300, 200, 300]);
         }
     }, [phase]);
@@ -100,17 +95,17 @@ function SafeTravel() {
             setAttempt(2);
             goTo("ask3", responseSeconds);
         } else if (phase === "ask3") {
-            handleEscalate();
+            escalate();
         }
     }
 
     async function startTrip() {
         if (!destination.trim()) {
-            setWarning("Please enter a destination.");
+            setWarning("Please enter a destination");
             return;
         }
-        setWarning("");
         setPhase("working");
+        setWarning("");
 
         const position = await getLocation();
         setLocation(position);
@@ -120,14 +115,40 @@ function SafeTravel() {
             if (res.ok) setContacts(res.data);
         } catch { /* ignore */ }
 
+        try {
+            const res = await apiRequest("POST", "/api/trips", {
+                userId: user.userId,
+                destination: destination.trim(),
+                expectedMinutes: minutes,
+                latitude: position ? position.latitude : null,
+                longitude: position ? position.longitude : null,
+            });
+            if (res.ok) {
+                setTripRecord(res.data);
+            } else {
+                setWarning(res.data.message || "Trip could not be saved.");
+                setPhase("setup");
+                return;
+            }
+        } catch {
+            setWarning("Cannot reach the server.");
+            setPhase("setup");
+            return;
+        }
+
         goTo("traveling", travelSeconds);
     }
 
-    function markSafe() {
+    async function markSafe() {
+        if (tripRecord) {
+            try {
+                await apiRequest("PUT", "/api/trips/" + tripRecord.tripId + "/safe?userId=" + user.userId);
+            } catch { /* ignore */ }
+        }
         setPhase("safe");
     }
 
-    async function handleEscalate() {
+    async function escalate() {
         setPhase("working");
 
         const position = await getLocation();
@@ -144,6 +165,12 @@ function SafeTravel() {
             } catch { /* ignore */ }
         }
 
+        if (tripRecord) {
+            try {
+                await apiRequest("PUT", "/api/trips/" + tripRecord.tripId + "/escalate?userId=" + user.userId);
+            } catch { /* ignore */ }
+        }
+
         setPhase("alert");
     }
 
@@ -152,7 +179,7 @@ function SafeTravel() {
     const mapLink = mapLinkFor(location);
     const where = mapLink ? "Last known location: " + mapLink : "Location is not available.";
     const message =
-        "TRAVEL ALERT: " + user.name + " was travelling to " + (destRef.current || "their destination") +
+        "TRAVEL ALERT: " + user.name + " was travelling to " + (tripRecord?.destination || destination) +
         " and has not confirmed reaching safely. " + where + " Please call them now.";
 
     if (phase === "setup") {
@@ -181,7 +208,7 @@ function SafeTravel() {
                         type="number"
                         min="1"
                         value={minutes}
-                        onChange={(e) => setMinutes(Number(e.target.value) || 1)}
+                        onChange={(e) => setMinutes(Number(e.target.value) || 0)}
                     />
 
                     {warning && <div className="st-warn">{warning}</div>}
@@ -206,7 +233,7 @@ function SafeTravel() {
             <div className="st-page">
                 <div className="st-card">
                     <h1>Please wait...</h1>
-                    <p className="st-text">Getting your location and contacts.</p>
+                    <p className="st-text">Saving your trip and location.</p>
                 </div>
             </div>
         );
@@ -216,10 +243,11 @@ function SafeTravel() {
         return (
             <div className="st-page">
                 <div className="st-card">
-                    <h1>Travelling to {destRef.current}</h1>
+                    <h1>Travelling to {tripRecord?.destination}</h1>
                     <p className="st-text">We'll check on you in</p>
                     <div className="st-timer">{formatTime(countdown)}</div>
 
+                    {warning && <div className="st-warn">{warning}</div>}
                     <div className="st-ok">
                         {location ? "✓ Journey started with your location" : "Location unavailable"}
                     </div>
@@ -233,7 +261,6 @@ function SafeTravel() {
 
     if (phase === "ask1" || phase === "ask2" || phase === "ask3") {
         const isLast = phase === "ask3";
-        const attemptNum = phase === "ask1" ? 1 : phase === "ask2" ? 2 : 3;
         return (
             <div className="st-page">
                 <div className="st-card">
@@ -241,21 +268,19 @@ function SafeTravel() {
                     <p className="st-text">
                         {isLast
                             ? "This is the last reminder. If you don't respond, your contacts will be alerted in"
-                            : "Attempt " + attemptNum + " of 3. If no response, we'll ask again in"}
+                            : "Attempt " + (attempt + 1) + " of 3. We'll ask again in"}
                     </p>
                     <div className="st-timer st-timer-red">{formatTime(countdown)}</div>
 
                     <div className="st-answers">
-                        <button className="st-yes" onClick={markSafe}>Yes, I'm safe</button>
+                        <button className="st-yes" onClick={markSafe}>Yes</button>
                         <button className="st-no" onClick={() => {
-                            if (isLast) {
-                                handleEscalate();
-                            } else {
-                                goTo("ask" + (attemptNum + 1), responseSeconds);
+                            if (isLast) escalate();
+                            else {
+                                setAttempt(attempt + 1);
+                                goTo("ask" + (attempt + 2), responseSeconds);
                             }
-                        }}>
-                            No
-                        </button>
+                        }}>No</button>
                     </div>
                 </div>
             </div>
@@ -268,7 +293,7 @@ function SafeTravel() {
                 <div className="st-card">
                     <h1>🚨 Travel alert</h1>
                     <p className="st-text">
-                        {user.name} has not confirmed reaching {destRef.current}. Alert your contacts now.
+                        {user.name} has not confirmed reaching {tripRecord?.destination}. Alert your contacts now.
                     </p>
 
                     <a className="st-call" href="tel:112">📞 Call 112 (Emergency)</a>
@@ -279,7 +304,7 @@ function SafeTravel() {
                     <button className="st-safe" onClick={markSafe}>I'm safe now</button>
 
                     <p className="st-note">
-                        Automatic police notification is future scope and needs official
+                        Automatic police notification is future scope. It needs official
                         emergency-service integration.
                     </p>
                 </div>
@@ -291,7 +316,7 @@ function SafeTravel() {
         <div className="st-page">
             <div className="st-card">
                 <h1>✅ Journey complete</h1>
-                <p className="st-text">Glad you reached safely!</p>
+                <p className="st-text">Glad you reached safely.</p>
                 <button className="st-safe" onClick={() => navigate("/")}>Back to Home</button>
             </div>
         </div>
