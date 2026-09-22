@@ -9,6 +9,7 @@ import Siren from "./pages/Siren";
 import SafetyCheck from "./pages/SafetyCheck";
 import LiveLocation from "./pages/LiveLocation";
 import SafeTravel from "./pages/SafeTravel";
+import About from "./pages/About";
 
 function App() {
     return (
@@ -23,8 +24,9 @@ function App() {
                 <Route path="/siren" element={<Siren />} />
                 <Route path="/safety-check" element={<SafetyCheck />} />
                 <Route path="/live-location" element={<LiveLocation />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
                 <Route path="/safe-travel" element={<SafeTravel />} />
+                <Route path="/about" element={<About />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </BrowserRouter>
     );

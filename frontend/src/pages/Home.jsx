@@ -102,9 +102,9 @@ function Home() {
                     <small>Contacts</small>
                 </button>
 
-                <button>
+                <button onClick={() => navigate("/about")}>
                     <span>⚙️</span>
-                    <small>Settings</small>
+                    <small>About</small>
                 </button>
             </nav>
 
