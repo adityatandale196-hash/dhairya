@@ -1,4 +1,5 @@
 import { Navigate, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import "../App.css";
 import dhairyaLogo from "../assets/logo.png";
 
@@ -13,6 +14,18 @@ const features = [
 
 function Home() {
     const navigate = useNavigate();
+
+    // Dark Mode Logic
+    const [theme, setTheme] = useState(localStorage.getItem("dhairyaTheme") || "light");
+
+    useEffect(() => {
+        document.body.className = theme === "dark" ? "dark-mode" : "";
+        localStorage.setItem("dhairyaTheme", theme);
+    }, [theme]);
+
+    function toggleTheme() {
+        setTheme(theme === "light" ? "dark" : "light");
+    }
 
     const stored = localStorage.getItem("dhairyaUser");
     const user = stored ? JSON.parse(stored) : null;
@@ -38,7 +51,18 @@ function Home() {
                         <p>Hi, {user.name}</p>
                     </div>
                 </div>
-                <button className="logout-btn" onClick={handleLogout}>Logout</button>
+
+                {/* Buttons Container */}
+                <div style={{ display: "flex", gap: "8px" }}>
+                    <button
+                        onClick={toggleTheme}
+                        style={{ background: "transparent", border: "1px solid var(--border-color)", color: "var(--text-main)", padding: "6px 10px", borderRadius: "8px", cursor: "pointer", fontSize: "16px" }}
+                        title="Toggle Dark Mode"
+                    >
+                        {theme === "light" ? "🌙" : "☀️"}
+                    </button>
+                    <button className="logout-btn" onClick={handleLogout}>Logout</button>
+                </div>
             </header>
 
             {/* Main Content */}
