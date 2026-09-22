@@ -36,6 +36,7 @@
 .ll-title {
     font-size: 20px;
     margin: 0;
+    color: var(--text-main);
 }
 
 .ll-warn {
@@ -82,9 +83,8 @@
     font-size: 14px;
     font-weight: 700;
     text-decoration: none;
-    color: white;
+    color: white !important;
     cursor: pointer;
-    border: none;
 }
 
 .ll-whatsapp { background: #16a34a; }
@@ -96,10 +96,8 @@
     padding: 14px;
     border-radius: 12px;
     background: #7c3aed;
-    color: white;
+    color: white !important;
     font-weight: bold;
-    border: none;
-    cursor: pointer;
     margin-top: 20px;
     font-size: 16px;
 }

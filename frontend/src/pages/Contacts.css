@@ -42,27 +42,29 @@
 .contact-card h3 {
     margin: 0 0 12px 0;
     font-size: 16px;
-}
-
-.contact-input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid var(--border-color);
-    background-color: var(--input-bg);
     color: var(--text-main);
-    margin-bottom: 12px;
-    font-size: 15px;
 }
 
+/* Add Contact Button */
 .add-contact-btn {
     width: 100%;
     padding: 14px;
     border-radius: 12px;
     background: #7c3aed;
-    color: white;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
+    color: white !important;
     font-size: 16px;
+    margin-top: 4px;
+}
+
+/* Edit Button */
+.edit-btn {
+    background-color: #7c3aed;
+    color: white !important;
+    margin-right: 8px;
+}
+
+/* Delete Button */
+.delete-btn {
+    background-color: #dc2626;
+    color: white !important;
 }
