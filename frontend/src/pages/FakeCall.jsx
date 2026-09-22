@@ -5,11 +5,11 @@ import "./FakeCall.css";
 function FakeCall() {
     const [caller, setCaller] = useState("Mom");
     const [delay, setDelay] = useState(5);
-    const [phase, setPhase] = useState("setup"); // setup, waiting, ringing, incall
+    const [phase, setPhase] = useState("setup");
     const [callTime, setCallTime] = useState(0);
 
-    // Reference to the audio element
-    const audioRef = useRef(null);
+    const audioCtxRef = useRef(null);
+    const ringIntervalRef = useRef(null);
 
     // Call timer
     useEffect(() => {
@@ -23,46 +23,75 @@ function FakeCall() {
     // Ringtone and Vibration Logic
     useEffect(() => {
         if (phase === "ringing") {
-            // 1. Vibrate phone (Android)
             if (navigator.vibrate) {
                 navigator.vibrate([1000, 1000, 1000, 1000, 1000, 1000]);
             }
-            // 2. Play the ringtone at full volume
-            if (audioRef.current) {
-                audioRef.current.volume = 1.0;
-                audioRef.current.play().catch(e => console.log("Play failed", e));
-            }
+            startRinging();
         } else {
-            // Stop everything if not ringing
             if (navigator.vibrate) navigator.vibrate(0);
-            if (audioRef.current) {
-                audioRef.current.pause();
-                audioRef.current.currentTime = 0;
-            }
+            stopRinging();
         }
 
         return () => {
             if (navigator.vibrate) navigator.vibrate(0);
-            if (audioRef.current) {
-                audioRef.current.pause();
-                audioRef.current.currentTime = 0;
-            }
+            stopRinging();
         };
     }, [phase]);
 
+    function startRinging() {
+        if (!audioCtxRef.current) return;
+        const ctx = audioCtxRef.current;
+
+        const playRing = () => {
+            // Create a loud dual-tone ring (Classic telephone sound)
+            const osc1 = ctx.createOscillator();
+            const osc2 = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+
+            osc1.type = 'sine';
+            osc1.frequency.value = 440; // Standard dial tone
+            osc2.type = 'sine';
+            osc2.frequency.value = 480; // Standard dial tone
+
+            osc1.connect(gainNode);
+            osc2.connect(gainNode);
+            gainNode.connect(ctx.destination);
+
+            const now = ctx.currentTime;
+            // Make it LOUD
+            gainNode.gain.setValueAtTime(0.8, now);
+            // Ring for 1.5 seconds, then silence for 0.5 seconds
+            gainNode.gain.setValueAtTime(0.8, now + 1.5);
+            gainNode.gain.setValueAtTime(0, now + 1.5);
+
+            osc1.start(now);
+            osc2.start(now);
+            osc1.stop(now + 2);
+            osc2.stop(now + 2);
+        };
+
+        // Play the ring sound immediately, then repeat every 2 seconds
+        playRing();
+        ringIntervalRef.current = setInterval(playRing, 2000);
+    }
+
+    function stopRinging() {
+        if (ringIntervalRef.current) {
+            clearInterval(ringIntervalRef.current);
+            ringIntervalRef.current = null;
+        }
+    }
+
     function startFakeCall() {
-        // THE MAGIC FIX: Unlock the audio engine immediately on click.
-        // We play the audio at 1% volume for a split second. This tells the browser
-        // "The user wants this to play" and bypasses the ad-blocker.
-        if (audioRef.current) {
-            audioRef.current.volume = 0.01;
-            audioRef.current.play().then(() => {
-                audioRef.current.pause();
-                audioRef.current.currentTime = 0;
-                audioRef.current.volume = 1.0; // Set to full volume for later
-            }).catch(e => console.log("Audio unlock failed", e));
+        // 1. UNLOCK AUDIO CONTEXT
+        if (!audioCtxRef.current) {
+            audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtxRef.current.state === 'suspended') {
+            audioCtxRef.current.resume();
         }
 
+        // 2. Start the timer
         setPhase("waiting");
         setTimeout(() => {
             setPhase("ringing");
@@ -79,21 +108,9 @@ function FakeCall() {
     }
 
     // --- RENDER SCREENS ---
-
-    // The hidden audio tag MUST be rendered in the DOM at all times
-    const HiddenAudio = () => (
-        <audio
-            ref={audioRef}
-            src="https://cdn.jsdelivr.net/npm/ringtones/Samsung/2024%20-%20Over%20the%20Horizon.mp3"
-            loop
-            preload="auto"
-        />
-    );
-
     if (phase === "setup") {
         return (
             <div className="fakecall-page">
-                {HiddenAudio()}
                 <Link to="/" className="ll-back" style={{ marginBottom: "20px" }}>← Back</Link>
                 <h1>Fake Call</h1>
                 <p>Get a realistic incoming call to help you leave an uncomfortable situation.</p>
@@ -116,7 +133,6 @@ function FakeCall() {
     if (phase === "waiting") {
         return (
             <div className="fakecall-page">
-                {HiddenAudio()}
                 <h1>Preparing Fake Call...</h1>
                 <p>Keep this screen open. Your phone will ring loudly in {delay} seconds.</p>
             </div>
@@ -126,7 +142,6 @@ function FakeCall() {
     if (phase === "ringing") {
         return (
             <div className="fakecall-screen ringing">
-                {HiddenAudio()}
                 <div className="fakecall-info">
                     <div className="fakecall-avatar">👤</div>
                     <div className="fakecall-name">{caller}</div>
@@ -145,7 +160,6 @@ function FakeCall() {
         const secs = String(callTime % 60).padStart(2, "0");
         return (
             <div className="fakecall-screen incall">
-                {HiddenAudio()}
                 <div className="fakecall-info">
                     <div className="fakecall-avatar">👤</div>
                     <div className="fakecall-name">{caller}</div>
