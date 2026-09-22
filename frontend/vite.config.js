@@ -44,6 +44,12 @@ export default defineConfig({
       }
     })
   ],
+  // 👇 THIS IS THE NEW FIX FOR THE VERCEL BUILD ERROR 👇
+  build: {
+    rollupOptions: {
+      treeshake: false,
+    },
+  },
   server: {
     host: true,
     proxy: {
