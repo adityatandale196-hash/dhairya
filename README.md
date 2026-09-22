@@ -1,11 +1,6 @@
-Project Title (Dhairya - Women's Safety App)
 
-Features list
-
-Tech Stack (React, Java, Spring Boot, PostgreSQL)
-
-Live Demo Link: (https://dhairya-navy.vercel.app)
-
+## 🔗 Live Demo
+Experience the app live on any device: [https://dhairya-navy.vercel.app](https://dhairya-navy.vercel.app)
 
 # Dhairya - Smart Women's Safety App
 
@@ -30,7 +25,6 @@ Dhairya is a Progressive Web App (PWA) designed to be a proactive safety compani
 - **Database:** PostgreSQL (Hosted on Render)
 - **Third-Party Services:** EmailJS (for automatic email alerts)
 
-## 🔗 Live Demo
-Experience the app live on any device: [https://dhairya-navy.vercel.app](https://dhairya-navy.vercel.app)
+
 
 *(Note: As the backend is hosted on a free tier, the first request might take 30-50 seconds to "wake up" the server. Please be patient on the first load.)*
