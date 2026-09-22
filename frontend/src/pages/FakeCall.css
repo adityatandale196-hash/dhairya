@@ -9,7 +9,7 @@
 }
 
 .fakecall-page h1 {
-    font-size: 24px;
+    font-size: 28px;
     margin-bottom: 10px;
     color: var(--text-main);
 }
@@ -17,18 +17,34 @@
 .fakecall-page p {
     color: var(--text-muted);
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     line-height: 1.5;
+    font-size: 15px;
 }
 
-.fakecall-page button {
-    padding: 14px 24px;
+.fakecall-page select {
+    background-color: var(--input-bg) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 14px;
     border-radius: 12px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 20px;
+}
+
+/* Start Fake Call Button */
+.fakecall-page button {
+    padding: 16px 24px;
+    border-radius: 14px;
     background-color: #7c3aed;
     color: white !important;
     font-weight: bold;
     font-size: 16px;
-    margin-top: 10px;
     width: 100%;
     max-width: 300px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
 }

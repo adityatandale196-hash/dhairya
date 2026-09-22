@@ -37,6 +37,7 @@
     border: 1px solid var(--border-color);
     border-radius: 16px;
     padding: 16px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
 }
 
 .contact-card h3 {
@@ -48,23 +49,51 @@
 /* Add Contact Button */
 .add-contact-btn {
     width: 100%;
-    padding: 14px;
-    border-radius: 12px;
+    padding: 16px;
+    border-radius: 14px;
     background: #7c3aed;
     color: white !important;
+    font-weight: bold;
     font-size: 16px;
-    margin-top: 4px;
+    border: none;
+    cursor: pointer;
+    margin-top: 8px;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+/* Edit and Delete Buttons Container */
+.contact-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
 }
 
 /* Edit Button */
 .edit-btn {
-    background-color: #7c3aed;
+    background-color: #3b82f6; /* Blue */
     color: white !important;
-    margin-right: 8px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
 }
 
 /* Delete Button */
 .delete-btn {
-    background-color: #dc2626;
+    background-color: #dc2626; /* Red */
     color: white !important;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Adds the Trash Can Symbol before Delete */
+.delete-btn::before {
+    content: "🗑️ ";
+    font-size: 16px;
 }
