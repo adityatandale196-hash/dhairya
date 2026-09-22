@@ -23,6 +23,11 @@
     text-decoration: none;
 }
 
+.contacts-header h1 {
+    font-size: 20px;
+    margin: 0;
+}
+
 .contacts-body {
     padding: 16px;
     max-width: 600px;
@@ -46,6 +51,17 @@
     color: var(--text-main);
 }
 
+.contacts-page input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-main);
+    margin-bottom: 12px;
+    font-size: 15px;
+}
+
 /* Add Contact Button */
 .add-contact-btn {
     width: 100%;
@@ -61,16 +77,14 @@
     box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
 }
 
-/* Edit and Delete Buttons Container */
 .contact-actions {
     display: flex;
     gap: 8px;
-    margin-top: 8px;
+    margin-top: 12px;
 }
 
-/* Edit Button */
 .edit-btn {
-    background-color: #3b82f6; /* Blue */
+    background-color: #3b82f6;
     color: white !important;
     padding: 10px 20px;
     border-radius: 10px;
@@ -80,9 +94,8 @@
     cursor: pointer;
 }
 
-/* Delete Button */
 .delete-btn {
-    background-color: #dc2626; /* Red */
+    background-color: #dc2626;
     color: white !important;
     padding: 10px 20px;
     border-radius: 10px;
@@ -90,10 +103,4 @@
     font-size: 14px;
     border: none;
     cursor: pointer;
-}
-
-/* Adds the Trash Can Symbol before Delete */
-.delete-btn::before {
-    content: "🗑️ ";
-    font-size: 16px;
 }

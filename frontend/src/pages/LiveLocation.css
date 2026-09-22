@@ -46,7 +46,6 @@
     border-radius: 10px;
     font-size: 13px;
     margin-bottom: 16px;
-    text-align: center;
 }
 
 .ll-contact {
@@ -92,7 +91,6 @@
 .ll-sms { background: #7c3aed; }
 .ll-call { background: #374151; }
 
-/* Get My Location Button */
 .ll-refresh {
     width: 100%;
     padding: 16px;
@@ -102,13 +100,6 @@
     font-weight: bold;
     border: none;
     cursor: pointer;
-    margin-top: 20px;
     font-size: 16px;
     box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
-}
-
-/* Adds the location pin symbol before the text */
-.ll-refresh::before {
-    content: "📍 ";
-    font-size: 18px;
 }

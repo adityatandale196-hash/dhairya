@@ -20,8 +20,10 @@
     margin-bottom: 24px;
     line-height: 1.5;
     font-size: 15px;
+    max-width: 400px;
 }
 
+.fakecall-page input,
 .fakecall-page select {
     background-color: var(--input-bg) !important;
     color: var(--text-main) !important;
@@ -34,7 +36,6 @@
     margin-bottom: 20px;
 }
 
-/* Start Fake Call Button */
 .fakecall-page button {
     padding: 16px 24px;
     border-radius: 14px;
