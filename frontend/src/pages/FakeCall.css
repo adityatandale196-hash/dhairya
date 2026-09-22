@@ -1,160 +1,56 @@
-.fc-page {
+.fakecall-page {
     min-height: 100vh;
-    background: #f5f7fb;
-    display: flex;
-    justify-content: center;
-    padding: 20px 14px;
-}
-
-.fc-card {
-    width: 100%;
-    max-width: 440px;
-    height: fit-content;
-    background: #ffffff;
-    border-radius: 24px;
-    padding: 24px 18px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-}
-
-.fc-back {
-    display: inline-block;
-    color: #7c3aed;
-    font-weight: 600;
-    text-decoration: none;
-    margin-bottom: 14px;
-}
-
-.fc-card h1 {
-    font-size: 24px;
-    margin-bottom: 6px;
-}
-
-.fc-text {
-    color: #6b7280;
-    font-size: 14px;
-    line-height: 1.5;
-    margin-bottom: 18px;
-}
-
-.fc-form {
+    background-color: #1e293b; /* Keeps it dark like a real phone call screen */
+    color: white;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-}
-
-.fc-form label {
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.fc-form input,
-.fc-form select {
-    width: 100%;
-    margin-top: 4px;
-    padding: 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 12px;
-    font-size: 16px;
-    background: #ffffff;
-}
-
-.fc-start {
-    padding: 15px;
-    border: none;
-    border-radius: 14px;
-    background: #7c3aed;
-    color: #ffffff;
-    font-size: 16px;
-    font-weight: 700;
-}
-
-.fc-waiting {
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
     text-align: center;
 }
 
-.fc-wait-number {
-    font-size: 56px;
-    font-weight: 700;
-    color: #7c3aed;
-    margin: 12px 0;
-}
-
-.fc-cancel {
-    width: 100%;
-    margin-top: 10px;
-    padding: 14px;
-    border: 1px solid #d1d5db;
-    border-radius: 14px;
-    background: #ffffff;
-    font-size: 16px;
-}
-
-/* Full-screen call */
-
-.fc-call {
-    min-height: 100vh;
-    background: linear-gradient(#111827, #1f2937);
-    color: #ffffff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    padding: 80px 24px 60px;
-    text-align: center;
-}
-
-.fc-avatar {
-    width: 110px;
-    height: 110px;
-    margin: 0 auto 18px;
+.fakecall-avatar {
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
-    background: #7c3aed;
-    font-size: 48px;
-    font-weight: 700;
+    background: #334155;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 50px;
+    margin-bottom: 20px;
 }
 
-.fc-name {
-    font-size: 32px;
-    font-weight: 600;
+.fakecall-name {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
 }
 
-.fc-sub {
-    margin-top: 6px;
+.fakecall-status {
+    color: #94a3b8;
+    margin-bottom: 50px;
     font-size: 16px;
-    color: #9ca3af;
 }
 
-.fc-actions {
-    width: 100%;
-    max-width: 320px;
+.fakecall-actions {
     display: flex;
-    justify-content: space-around;
+    gap: 40px;
 }
 
-.fc-action {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-}
-
-.fc-round {
-    width: 74px;
-    height: 74px;
-    border: none;
+.fakecall-btn {
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 30px;
-    color: #ffffff;
+    cursor: pointer;
+    color: white;
 }
 
-.fc-green {
-    background: #16a34a;
-}
-
-.fc-red {
-    background: #dc2626;
-}
+.fakecall-accept { background: #16a34a; }
+.fakecall-decline { background: #dc2626; }

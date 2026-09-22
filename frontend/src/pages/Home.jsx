@@ -1,7 +1,7 @@
 import { Navigate, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 import "../App.css";
 import dhairyaLogo from "../assets/logo.png";
+import ThemeToggle from "../components/ThemeToggle"; // Import the new component
 
 const features = [
     { icon: "🛡️", title: "Safety Check", text: "Check your safety", path: "/safety-check" },
@@ -14,18 +14,6 @@ const features = [
 
 function Home() {
     const navigate = useNavigate();
-
-    // Dark Mode Logic
-    const [theme, setTheme] = useState(localStorage.getItem("dhairyaTheme") || "light");
-
-    useEffect(() => {
-        document.body.className = theme === "dark" ? "dark-mode" : "";
-        localStorage.setItem("dhairyaTheme", theme);
-    }, [theme]);
-
-    function toggleTheme() {
-        setTheme(theme === "light" ? "dark" : "light");
-    }
 
     const stored = localStorage.getItem("dhairyaUser");
     const user = stored ? JSON.parse(stored) : null;
@@ -41,8 +29,6 @@ function Home() {
 
     return (
         <div className="app">
-
-            {/* Header */}
             <header className="top-bar">
                 <div className="brand">
                     <img src={dhairyaLogo} alt="Dhairya Logo" className="brand-logo" />
@@ -52,36 +38,21 @@ function Home() {
                     </div>
                 </div>
 
-                {/* Buttons Container */}
-                <div style={{ display: "flex", gap: "8px" }}>
-                    <button
-                        onClick={toggleTheme}
-                        style={{ background: "transparent", border: "1px solid var(--border-color)", color: "var(--text-main)", padding: "6px 10px", borderRadius: "8px", cursor: "pointer", fontSize: "16px" }}
-                        title="Toggle Dark Mode"
-                    >
-                        {theme === "light" ? "🌙" : "☀️"}
-                    </button>
+                {/* Toggle and Logout buttons */}
+                <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                    <ThemeToggle />
                     <button className="logout-btn" onClick={handleLogout}>Logout</button>
                 </div>
             </header>
 
-            {/* Main Content */}
             <main className="home-container">
-
                 <section className="welcome-card">
                     <img src={dhairyaLogo} alt="Dhairya Logo" className="welcome-logo" />
                     <p className="small-text">Welcome to Dhairya</p>
-                    <h2>
-                        Stay Safe.
-                        <br />
-                        Stay Connected.
-                    </h2>
-                    <p className="welcome-description">
-                        Smart safety support for emergencies and travel.
-                    </p>
+                    <h2>Stay Safe.<br />Stay Connected.</h2>
+                    <p className="welcome-description">Smart safety support for emergencies and travel.</p>
                 </section>
 
-                {/* SOS Button */}
                 <section className="sos-section">
                     <button className="sos-button" onClick={() => navigate("/sos")}>
                         <span className="sos-icon">!</span>
@@ -90,14 +61,9 @@ function Home() {
                     </button>
                 </section>
 
-                {/* Features */}
                 <section className="feature-grid">
                     {features.map((f) => (
-                        <button
-                            className="feature-card"
-                            key={f.title}
-                            onClick={() => f.path && navigate(f.path)}
-                        >
+                        <button className="feature-card" key={f.title} onClick={() => f.path && navigate(f.path)}>
                             <div className="feature-icon">{f.icon}</div>
                             <h3>{f.title}</h3>
                             <p>{f.text}</p>
@@ -106,32 +72,13 @@ function Home() {
                 </section>
             </main>
 
-            {/* Bottom Navigation */}
             <nav className="bottom-nav">
-                <button onClick={() => navigate("/")}>
-                    <span>⌂</span>
-                    <small>Home</small>
-                </button>
-
-                <button onClick={() => navigate("/live-location")}>
-                    <span>📍</span>
-                    <small>Location</small>
-                </button>
-                <button className="nav-sos" onClick={() => navigate("/sos")}>
-                    <span>!</span>
-                </button>
-
-                <button onClick={() => navigate("/contacts")}>
-                    <span>👥</span>
-                    <small>Contacts</small>
-                </button>
-
-                <button onClick={() => navigate("/about")}>
-                    <span>⚙️</span>
-                    <small>About</small>
-                </button>
+                <button onClick={() => navigate("/")}><span>⌂</span><small>Home</small></button>
+                <button onClick={() => navigate("/live-location")}><span>📍</span><small>Location</small></button>
+                <button className="nav-sos" onClick={() => navigate("/sos")}><span>!</span></button>
+                <button onClick={() => navigate("/contacts")}><span>👥</span><small>Contacts</small></button>
+                <button onClick={() => navigate("/about")}><span>⚙️</span><small>About</small></button>
             </nav>
-
         </div>
     );
 }
