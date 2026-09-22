@@ -1,10 +1,10 @@
-import { whatsappLink, smsLink, alertAllContacts, smsLinkAll, emailLinkAll } from "../services/share";
+import { whatsappLink, smsLink, alertAllContacts, smsLinkAll } from "../services/share";
 import { Link } from "react-router-dom";
 
 function AlertPanel({ contacts, message, className = "" }) {
     if (contacts.length === 0) {
         return (
-            <p style={{ color: "#6b7280", fontSize: "14px" }}>
+            <p style={{ color: "var(--text-muted)", fontSize: "14px" }}>
                 No emergency contacts yet.{" "}
                 <Link to="/contacts" style={{ color: "#7c3aed", fontWeight: 700 }}>
                     Add contacts
@@ -13,7 +13,6 @@ function AlertPanel({ contacts, message, className = "" }) {
         );
     }
 
-    const emailAllUrl = emailLinkAll(contacts, message);
     const smsAllUrl = smsLinkAll(contacts, message);
 
     return (
@@ -23,66 +22,65 @@ function AlertPanel({ contacts, message, className = "" }) {
                 onClick={() => alertAllContacts(contacts, message)}
                 style={{
                     width: "100%",
-                    padding: "16px",
-                    marginBottom: "8px",
+                    padding: "18px",
+                    marginBottom: "12px",
                     border: "none",
-                    borderRadius: "14px",
-                    background: "#dc2626",
+                    borderRadius: "16px",
+                    background: "linear-gradient(135deg, #ef4444, #b91c1c)",
                     color: "#ffffff",
                     fontSize: "16px",
-                    fontWeight: 700,
-                    cursor: "pointer"
+                    fontWeight: "bold",
+                    boxShadow: "0 6px 20px rgba(220, 38, 38, 0.4)",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px"
                 }}
             >
                 🚨 Alert All Contacts (Share Menu)
             </button>
 
-            {/* Secondary Options Grid */}
-            <div style={{ display: "flex", gap: "8px", marginBottom: "14px" }}>
-                {smsAllUrl && (
-                    <a
-                        href={smsAllUrl}
-                        style={{
-                            flex: 1, padding: "12px", borderRadius: "14px",
-                            textAlign: "center", fontSize: "13px", fontWeight: 700,
-                            textDecoration: "none", color: "#ffffff", background: "#7c3aed",
-                            display: "block"
-                        }}
-                    >
-                        📱 SMS All (Auto-fill)
-                    </a>
-                )}
+            {/* SMS All Button */}
+            {smsAllUrl && (
+                <a
+                    href={smsAllUrl}
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "8px",
+                        width: "100%",
+                        padding: "16px",
+                        marginBottom: "14px",
+                        borderRadius: "16px",
+                        background: "linear-gradient(135deg, #a855f7, #7c3aed)",
+                        color: "#ffffff",
+                        fontSize: "15px",
+                        fontWeight: "bold",
+                        textDecoration: "none",
+                        boxShadow: "0 4px 15px rgba(124, 58, 237, 0.3)"
+                    }}
+                >
+                    📱 SMS All (Auto-fill)
+                </a>
+            )}
 
-                {emailAllUrl && (
-                    <a
-                        href={emailAllUrl}
-                        style={{
-                            flex: 1, padding: "12px", borderRadius: "14px",
-                            textAlign: "center", fontSize: "13px", fontWeight: 700,
-                            textDecoration: "none", color: "#ffffff", background: "#2563eb",
-                            display: "block"
-                        }}
-                    >
-                        ✉️ Email All
-                    </a>
-                )}
-            </div>
-
-            <p style={{ fontSize: "12px", color: "#6b7280", marginBottom: "14px", textAlign: "center" }}>
-                "Share Menu" opens your phone's menu to select WhatsApp and choose contacts. "SMS All" tries to pre-fill all numbers.
+            <p style={{ fontSize: "12px", color: "var(--text-muted)", marginBottom: "16px", textAlign: "center" }}>
+                "Share Menu" opens WhatsApp with multiple contacts. "SMS All" tries to pre-fill all numbers.
             </p>
 
-            {/* Individual buttons */}
+            {/* Individual Contact Buttons */}
             {contacts.map((c) => (
                 <div
                     key={c.contactId}
                     style={{
-                        padding: "12px 0",
-                        borderBottom: "1px solid #edf0f4",
+                        padding: "16px 0",
+                        borderBottom: "1px solid var(--border-color)",
                     }}
                 >
-                    <div style={{ fontWeight: 700, fontSize: "15px" }}>{c.name}</div>
-                    <div style={{ fontSize: "13px", color: "#6b7280", marginBottom: "8px" }}>
+                    <div style={{ fontWeight: "700", fontSize: "16px", color: "var(--text-main)" }}>{c.name}</div>
+                    <div style={{ fontSize: "13px", color: "var(--text-muted)", marginBottom: "10px" }}>
                         {c.phone}{c.relationship ? " · " + c.relationship : ""}
                     </div>
 
@@ -92,9 +90,11 @@ function AlertPanel({ contacts, message, className = "" }) {
                             target="_blank"
                             rel="noreferrer"
                             style={{
-                                flex: 1, padding: "10px 6px", borderRadius: "12px",
-                                textAlign: "center", fontSize: "14px", fontWeight: 700,
-                                textDecoration: "none", color: "#ffffff", background: "#16a34a"
+                                flex: 1, padding: "12px 6px", borderRadius: "12px",
+                                textAlign: "center", fontSize: "14px", fontWeight: "bold",
+                                textDecoration: "none", color: "#ffffff",
+                                background: "linear-gradient(135deg, #22c55e, #16a34a)",
+                                boxShadow: "0 4px 10px rgba(22, 163, 74, 0.3)"
                             }}
                         >
                             WhatsApp
@@ -103,9 +103,11 @@ function AlertPanel({ contacts, message, className = "" }) {
                         <a
                             href={smsLink(c.phone, message)}
                             style={{
-                                flex: 1, padding: "10px 6px", borderRadius: "12px",
-                                textAlign: "center", fontSize: "14px", fontWeight: 700,
-                                textDecoration: "none", color: "#ffffff", background: "#7c3aed"
+                                flex: 1, padding: "12px 6px", borderRadius: "12px",
+                                textAlign: "center", fontSize: "14px", fontWeight: "bold",
+                                textDecoration: "none", color: "#ffffff",
+                                background: "linear-gradient(135deg, #a855f7, #7c3aed)",
+                                boxShadow: "0 4px 10px rgba(124, 58, 237, 0.3)"
                             }}
                         >
                             SMS
@@ -114,9 +116,11 @@ function AlertPanel({ contacts, message, className = "" }) {
                         <a
                             href={"tel:" + c.phone}
                             style={{
-                                flex: 1, padding: "10px 6px", borderRadius: "12px",
-                                textAlign: "center", fontSize: "14px", fontWeight: 700,
-                                textDecoration: "none", color: "#ffffff", background: "#374151"
+                                flex: 1, padding: "12px 6px", borderRadius: "12px",
+                                textAlign: "center", fontSize: "14px", fontWeight: "bold",
+                                textDecoration: "none", color: "#ffffff",
+                                background: "linear-gradient(135deg, #4b5563, #374151)",
+                                boxShadow: "0 4px 10px rgba(55, 65, 81, 0.3)"
                             }}
                         >
                             Call

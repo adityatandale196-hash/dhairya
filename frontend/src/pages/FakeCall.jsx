@@ -1,46 +1,124 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./FakeCall.css";
 
 function FakeCall() {
     const [caller, setCaller] = useState("Mom");
-    const [delay, setDelay] = useState(10);
-    const [started, setStarted] = useState(false);
+    const [delay, setDelay] = useState(5); // Default to 5s for easy testing
+    const [phase, setPhase] = useState("setup"); // setup, waiting, ringing, incall
+    const [callTime, setCallTime] = useState(0);
+
+    // Ringtone and vibration logic
+    useEffect(() => {
+        let audio;
+        if (phase === "ringing") {
+            // Vibrate pattern for incoming call
+            if (navigator.vibrate) navigator.vibrate([500, 500, 500, 500, 500, 500, 500, 500, 500, 500]);
+
+            // Play a realistic ringtone
+            audio = new Audio("https://actions.google.com/sounds/v1/alarms/phone_ringing.ogg");
+            audio.loop = true;
+            audio.play().catch(e => console.log("Audio play failed", e));
+        }
+        return () => {
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+            if (navigator.vibrate) navigator.vibrate(0);
+        };
+    }, [phase]);
+
+    // Call timer logic
+    useEffect(() => {
+        let interval;
+        if (phase === "incall") {
+            interval = setInterval(() => setCallTime(prev => prev + 1), 1000);
+        }
+        return () => clearInterval(interval);
+    }, [phase]);
 
     function startFakeCall() {
-        setStarted(true);
+        setPhase("waiting");
         setTimeout(() => {
-            // Trigger fake call UI
-            alert("Incoming call from " + caller);
+            setPhase("ringing");
         }, delay * 1000);
     }
 
-    return (
-        <div className="fakecall-page">
-            <Link to="/" className="ll-back" style={{ marginBottom: "20px" }}>← Back</Link>
-            <h1>Fake Call</h1>
-            <p>Get a realistic incoming call to help you leave an uncomfortable situation. Keep this screen open until the call arrives.</p>
+    function acceptCall() {
+        setPhase("incall");
+        setCallTime(0);
+    }
 
-            <label className="ll-contact-info" style={{ textAlign: "left", width: "100%", maxWidth: "300px" }}>Caller name</label>
-            <input
-                type="text"
-                value={caller}
-                onChange={(e) => setCaller(e.target.value)}
-                placeholder="Mom"
-            />
+    function declineCall() {
+        setPhase("setup");
+    }
 
-            <label className="ll-contact-info" style={{ textAlign: "left", width: "100%", maxWidth: "300px" }}>Ring after</label>
-            <select value={delay} onChange={(e) => setDelay(Number(e.target.value))}>
-                <option value={5}>5 seconds</option>
-                <option value={10}>10 seconds</option>
-                <option value={30}>30 seconds</option>
-            </select>
+    // --- RENDER SCREENS ---
 
-            <button onClick={startFakeCall} disabled={started}>
-                {started ? "Call Scheduled..." : "Start Fake Call"}
-            </button>
-        </div>
-    );
+    if (phase === "setup") {
+        return (
+            <div className="fakecall-page">
+                <Link to="/" className="ll-back" style={{ marginBottom: "20px" }}>← Back</Link>
+                <h1>Fake Call</h1>
+                <p>Get a realistic incoming call to help you leave an uncomfortable situation.</p>
+
+                <label className="ll-contact-info" style={{ textAlign: "left", width: "100%", maxWidth: "300px" }}>Caller name</label>
+                <input type="text" value={caller} onChange={(e) => setCaller(e.target.value)} placeholder="Mom" />
+
+                <label className="ll-contact-info" style={{ textAlign: "left", width: "100%", maxWidth: "300px" }}>Ring after</label>
+                <select value={delay} onChange={(e) => setDelay(Number(e.target.value))}>
+                    <option value={5}>5 seconds (Demo)</option>
+                    <option value={10}>10 seconds</option>
+                    <option value={30}>30 seconds</option>
+                </select>
+
+                <button onClick={startFakeCall}>Start Fake Call</button>
+            </div>
+        );
+    }
+
+    if (phase === "waiting") {
+        return (
+            <div className="fakecall-page">
+                <h1>Preparing Fake Call...</h1>
+                <p>Keep this screen open. Your phone will ring in {delay} seconds.</p>
+            </div>
+        );
+    }
+
+    if (phase === "ringing") {
+        return (
+            <div className="fakecall-screen ringing">
+                <div className="fakecall-info">
+                    <div className="fakecall-avatar">👤</div>
+                    <div className="fakecall-name">{caller}</div>
+                    <div className="fakecall-status">Incoming call...</div>
+                </div>
+                <div className="fakecall-actions">
+                    <button className="fakecall-btn fakecall-decline" onClick={declineCall}>📞</button>
+                    <button className="fakecall-btn fakecall-accept" onClick={acceptCall}>📞</button>
+                </div>
+            </div>
+        );
+    }
+
+    if (phase === "incall") {
+        const mins = String(Math.floor(callTime / 60)).padStart(2, "0");
+        const secs = String(callTime % 60).padStart(2, "0");
+        return (
+            <div className="fakecall-screen incall">
+                <div className="fakecall-info">
+                    <div className="fakecall-avatar">👤</div>
+                    <div className="fakecall-name">{caller}</div>
+                    <div className="fakecall-status">{mins}:{secs}</div>
+                </div>
+                <div className="fakecall-actions">
+                    <button className="fakecall-btn fakecall-decline" onClick={declineCall}>📞</button>
+                </div>
+            </div>
+        );
+    }
 }
 
 export default FakeCall;
