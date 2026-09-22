@@ -8,6 +8,7 @@ function FakeCall() {
     const [phase, setPhase] = useState("setup"); // setup, waiting, ringing, incall
     const [callTime, setCallTime] = useState(0);
 
+    // Reference to the audio element
     const audioRef = useRef(null);
 
     // Call timer
@@ -24,9 +25,9 @@ function FakeCall() {
         if (phase === "ringing") {
             // 1. Vibrate phone (Android)
             if (navigator.vibrate) {
-                navigator.vibrate([1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000]);
+                navigator.vibrate([1000, 1000, 1000, 1000, 1000, 1000]);
             }
-            // 2. Play the unlocked ringtone
+            // 2. Play the ringtone at full volume
             if (audioRef.current) {
                 audioRef.current.volume = 1.0;
                 audioRef.current.play().catch(e => console.log("Play failed", e));
@@ -50,14 +51,16 @@ function FakeCall() {
     }, [phase]);
 
     function startFakeCall() {
-        // THE MAGIC FIX: Unlock the audio engine immediately on click
+        // THE MAGIC FIX: Unlock the audio engine immediately on click.
+        // We play the audio at 1% volume for a split second. This tells the browser
+        // "The user wants this to play" and bypasses the ad-blocker.
         if (audioRef.current) {
-            audioRef.current.volume = 0.01; // Play at 1% volume to unlock
+            audioRef.current.volume = 0.01;
             audioRef.current.play().then(() => {
                 audioRef.current.pause();
                 audioRef.current.currentTime = 0;
                 audioRef.current.volume = 1.0; // Set to full volume for later
-            }).catch(e => console.log("Unlock failed", e));
+            }).catch(e => console.log("Audio unlock failed", e));
         }
 
         setPhase("waiting");
@@ -77,11 +80,11 @@ function FakeCall() {
 
     // --- RENDER SCREENS ---
 
-    // The hidden audio tag MUST be rendered in the DOM
+    // The hidden audio tag MUST be rendered in the DOM at all times
     const HiddenAudio = () => (
         <audio
             ref={audioRef}
-            src="https://actions.google.com/sounds/v1/alarms/phone_ringing.ogg"
+            src="https://cdn.jsdelivr.net/npm/ringtones/Samsung/2024%20-%20Over%20the%20Horizon.mp3"
             loop
             preload="auto"
         />
