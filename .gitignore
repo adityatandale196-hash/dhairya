@@ -1,0 +1,5 @@
+node_modules/
+target/
+build/
+.env
+.DS_Store
