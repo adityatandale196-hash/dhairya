@@ -7,11 +7,11 @@
   max-width: 600px;
   margin: 0 auto;
   position: relative;
-  padding-bottom: 80px; /* Space for bottom nav */
+  padding-bottom: 90px; /* Space for bottom nav */
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Header */
+/* ================= HEADER ================= */
 .top-bar {
   background-color: var(--header-bg);
   border-bottom: 1px solid var(--border-color);
@@ -56,9 +56,14 @@
   background: transparent;
   color: var(--text-main);
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-/* Main Content */
+.logout-btn:hover {
+  background: var(--border-color);
+}
+
+/* ================= MAIN CONTENT ================= */
 .home-container {
   padding: 16px;
   display: flex;
@@ -91,6 +96,7 @@
 .welcome-card h2 {
   font-size: 24px;
   margin: 0 0 8px 0;
+  line-height: 1.2;
 }
 
 .welcome-description {
@@ -99,45 +105,74 @@
   margin: 0;
 }
 
-/* SOS Button */
+/* ================= CIRCULAR SOS BUTTON ================= */
 .sos-section {
   display: flex;
   justify-content: center;
+  margin: 20px 0;
 }
 
 .sos-button {
-  width: 100%;
-  max-width: 300px;
-  height: 80px;
-  border-radius: 40px;
-  background: #dc2626;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%; /* Makes it a perfect circle */
+  background: radial-gradient(circle at 30% 30%, #ef4444, #b91c1c); /* 3D gradient effect */
   color: white;
-  border: none;
+  border: 6px solid rgba(255, 255, 255, 0.2); /* A soft white ring around it */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+  box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  outline: none;
+  animation: pulse 2s infinite; /* Adds the glowing animation */
+}
+
+/* Makes the button physically press down when tapped */
+.sos-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 5px 15px rgba(220, 38, 38, 0.6);
+}
+
+/* The glowing pulse animation */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 25px rgba(220, 38, 38, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
 }
 
 .sos-icon {
-  font-size: 24px;
+  font-size: 36px;
   line-height: 1;
+  margin-bottom: 5px;
+  font-weight: 900;
 }
 
-.sos-button span {
-  font-size: 18px;
+.sos-button span:not(.sos-icon) {
+  font-size: 28px;
+  letter-spacing: 3px;
+  font-weight: 800;
+  margin-bottom: 4px;
 }
 
 .sos-button small {
-  font-size: 12px;
-  font-weight: normal;
+  font-size: 11px;
+  font-weight: 600;
   opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-/* Features Grid */
+/* ================= FEATURES GRID ================= */
 .feature-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -158,6 +193,10 @@
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
+.feature-card:hover {
+  border-color: #7c3aed;
+}
+
 .feature-icon {
   font-size: 24px;
 }
@@ -173,7 +212,7 @@
   margin: 0;
 }
 
-/* Bottom Navigation */
+/* ================= BOTTOM NAVIGATION ================= */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -201,6 +240,11 @@
   color: var(--text-muted);
   cursor: pointer;
   font-size: 20px;
+  transition: color 0.2s ease;
+}
+
+.bottom-nav button:hover {
+  color: #7c3aed;
 }
 
 .bottom-nav small {

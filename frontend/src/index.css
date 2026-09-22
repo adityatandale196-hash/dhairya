@@ -8,7 +8,7 @@
   --header-bg: #ffffff;
 }
 
-/* Dark Theme Colors (Applied when body has class "dark-mode") */
+/* Dark Theme Colors */
 body.dark-mode {
   --bg-color: #0f172a;
   --card-bg: #1e293b;
