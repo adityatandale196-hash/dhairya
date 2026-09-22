@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import dhairyaLogo from "../assets/logo.png";
+import dhairyaLogo from "../assets/logo.png"; // ⚠️ MAKE SURE THIS FILE EXISTS
 import "./About.css";
 
 const features = [
@@ -106,16 +106,24 @@ function About() {
                     </div>
                 </div>
 
-                {/* Team */}
+                {/* Team Members - FIXED! */}
                 <div className="about-card">
                     <h3>👥 Team Members</h3>
                     <div className="about-row">
-                        <span className="about-label">Developer</span>
+                        <span className="about-label">Member 1</span>
                         <span className="about-value">Aditya Tandale</span>
                     </div>
                     <div className="about-row">
-                        <span className="about-label">Role</span>
-                        <span className="about-value">Full Stack Developer</span>
+                        <span className="about-label">Member 2</span>
+                        <span className="about-value">Rahul Sumbe</span>
+                    </div>
+                    <div className="about-row">
+                        <span className="about-label">Member 3</span>
+                        <span className="about-value">Ayush Shinde</span>
+                    </div>
+                    <div className="about-row">
+                        <span className="about-label">Member 4</span>
+                        <span className="about-value">Dnyaneshwar Shingate</span>
                     </div>
                 </div>
 
@@ -144,8 +152,8 @@ function About() {
                                 key={t.label}
                                 className={"about-badge about-badge-" + t.color}
                             >
-                {t.label}
-              </span>
+                                {t.label}
+                            </span>
                         ))}
                     </div>
                 </div>
@@ -218,19 +226,3 @@ function About() {
 }
 
 export default About;
-<div className="about-row">
-    <span className="about-label">Member 1</span>
-    <span className="about-value">Aditya Tandale</span>
-</div>
-<div className="about-row">
-    <span className="about-label">Member 2</span>
-    <span className="about-value">Rahul Sumbe</span>
-</div>
-<div className="about-row">
-    <span className="about-label">Member 3</span>
-    <span className="about-value">Ayush Shinde</span>
-</div>
-<div className="about-row">
-    <span className="about-label">Member 4</span>
-    <span className="about-value">Dnyaneshwar Shingate</span>
-</div>
