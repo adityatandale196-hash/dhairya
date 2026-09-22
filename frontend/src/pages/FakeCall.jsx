@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import "./FakeCall.css";
 
@@ -8,26 +8,8 @@ function FakeCall() {
     const [phase, setPhase] = useState("setup"); // setup, waiting, ringing, incall
     const [callTime, setCallTime] = useState(0);
 
-    // Ringtone and vibration logic
-    useEffect(() => {
-        let audio;
-        if (phase === "ringing") {
-            // Vibrate pattern for incoming call
-            if (navigator.vibrate) navigator.vibrate([500, 500, 500, 500, 500, 500, 500, 500, 500, 500]);
-
-            // Play a realistic ringtone
-            audio = new Audio("https://actions.google.com/sounds/v1/alarms/phone_ringing.ogg");
-            audio.loop = true;
-            audio.play().catch(e => console.log("Audio play failed", e));
-        }
-        return () => {
-            if (audio) {
-                audio.pause();
-                audio.currentTime = 0;
-            }
-            if (navigator.vibrate) navigator.vibrate(0);
-        };
-    }, [phase]);
+    // Use a reference to hold the audio object so it persists across renders
+    const audioRef = useRef(null);
 
     // Call timer logic
     useEffect(() => {
@@ -38,7 +20,47 @@ function FakeCall() {
         return () => clearInterval(interval);
     }, [phase]);
 
+    // Ringtone and vibration logic
+    useEffect(() => {
+        if (phase === "ringing") {
+            // Strong vibration pattern (5 seconds of vibrating)
+            if (navigator.vibrate) navigator.vibrate([1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000]);
+
+            // Play the pre-loaded audio at full volume
+            if (audioRef.current) {
+                audioRef.current.volume = 1.0; // Full volume
+                audioRef.current.play().catch(e => console.log("Audio play failed", e));
+            }
+        } else {
+            // Stop vibration and audio if we are not ringing
+            if (navigator.vibrate) navigator.vibrate(0);
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current.currentTime = 0;
+            }
+        }
+
+        return () => {
+            if (navigator.vibrate) navigator.vibrate(0);
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current.currentTime = 0;
+            }
+        };
+    }, [phase]);
+
     function startFakeCall() {
+        // 1. UNLOCK THE AUDIO ENGINE
+        // We create and play the audio at a tiny volume immediately on click.
+        // This tells the browser "the user wants this to play".
+        audioRef.current = new Audio("https://actions.google.com/sounds/v1/alarms/phone_ringing.ogg");
+        audioRef.current.volume = 0.01;
+        audioRef.current.play().then(() => {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+        }).catch(e => console.log("Audio unlock failed", e));
+
+        // 2. Start the timer
         setPhase("waiting");
         setTimeout(() => {
             setPhase("ringing");
@@ -82,7 +104,7 @@ function FakeCall() {
         return (
             <div className="fakecall-page">
                 <h1>Preparing Fake Call...</h1>
-                <p>Keep this screen open. Your phone will ring in {delay} seconds.</p>
+                <p>Keep this screen open. Your phone will ring loudly in {delay} seconds.</p>
             </div>
         );
     }
