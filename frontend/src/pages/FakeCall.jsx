@@ -4,14 +4,13 @@ import "./FakeCall.css";
 
 function FakeCall() {
     const [caller, setCaller] = useState("Mom");
-    const [delay, setDelay] = useState(5); // Default to 5s for easy testing
+    const [delay, setDelay] = useState(5);
     const [phase, setPhase] = useState("setup"); // setup, waiting, ringing, incall
     const [callTime, setCallTime] = useState(0);
 
-    // Use a reference to hold the audio object so it persists across renders
     const audioRef = useRef(null);
 
-    // Call timer logic
+    // Call timer
     useEffect(() => {
         let interval;
         if (phase === "incall") {
@@ -20,19 +19,20 @@ function FakeCall() {
         return () => clearInterval(interval);
     }, [phase]);
 
-    // Ringtone and vibration logic
+    // Ringtone and Vibration Logic
     useEffect(() => {
         if (phase === "ringing") {
-            // Strong vibration pattern (5 seconds of vibrating)
-            if (navigator.vibrate) navigator.vibrate([1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000]);
-
-            // Play the pre-loaded audio at full volume
+            // 1. Vibrate phone (Android)
+            if (navigator.vibrate) {
+                navigator.vibrate([1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000]);
+            }
+            // 2. Play the unlocked ringtone
             if (audioRef.current) {
-                audioRef.current.volume = 1.0; // Full volume
-                audioRef.current.play().catch(e => console.log("Audio play failed", e));
+                audioRef.current.volume = 1.0;
+                audioRef.current.play().catch(e => console.log("Play failed", e));
             }
         } else {
-            // Stop vibration and audio if we are not ringing
+            // Stop everything if not ringing
             if (navigator.vibrate) navigator.vibrate(0);
             if (audioRef.current) {
                 audioRef.current.pause();
@@ -50,17 +50,16 @@ function FakeCall() {
     }, [phase]);
 
     function startFakeCall() {
-        // 1. UNLOCK THE AUDIO ENGINE
-        // We create and play the audio at a tiny volume immediately on click.
-        // This tells the browser "the user wants this to play".
-        audioRef.current = new Audio("https://actions.google.com/sounds/v1/alarms/phone_ringing.ogg");
-        audioRef.current.volume = 0.01;
-        audioRef.current.play().then(() => {
-            audioRef.current.pause();
-            audioRef.current.currentTime = 0;
-        }).catch(e => console.log("Audio unlock failed", e));
+        // THE MAGIC FIX: Unlock the audio engine immediately on click
+        if (audioRef.current) {
+            audioRef.current.volume = 0.01; // Play at 1% volume to unlock
+            audioRef.current.play().then(() => {
+                audioRef.current.pause();
+                audioRef.current.currentTime = 0;
+                audioRef.current.volume = 1.0; // Set to full volume for later
+            }).catch(e => console.log("Unlock failed", e));
+        }
 
-        // 2. Start the timer
         setPhase("waiting");
         setTimeout(() => {
             setPhase("ringing");
@@ -78,9 +77,20 @@ function FakeCall() {
 
     // --- RENDER SCREENS ---
 
+    // The hidden audio tag MUST be rendered in the DOM
+    const HiddenAudio = () => (
+        <audio
+            ref={audioRef}
+            src="https://actions.google.com/sounds/v1/alarms/phone_ringing.ogg"
+            loop
+            preload="auto"
+        />
+    );
+
     if (phase === "setup") {
         return (
             <div className="fakecall-page">
+                {HiddenAudio()}
                 <Link to="/" className="ll-back" style={{ marginBottom: "20px" }}>← Back</Link>
                 <h1>Fake Call</h1>
                 <p>Get a realistic incoming call to help you leave an uncomfortable situation.</p>
@@ -103,6 +113,7 @@ function FakeCall() {
     if (phase === "waiting") {
         return (
             <div className="fakecall-page">
+                {HiddenAudio()}
                 <h1>Preparing Fake Call...</h1>
                 <p>Keep this screen open. Your phone will ring loudly in {delay} seconds.</p>
             </div>
@@ -112,6 +123,7 @@ function FakeCall() {
     if (phase === "ringing") {
         return (
             <div className="fakecall-screen ringing">
+                {HiddenAudio()}
                 <div className="fakecall-info">
                     <div className="fakecall-avatar">👤</div>
                     <div className="fakecall-name">{caller}</div>
@@ -130,6 +142,7 @@ function FakeCall() {
         const secs = String(callTime % 60).padStart(2, "0");
         return (
             <div className="fakecall-screen incall">
+                {HiddenAudio()}
                 <div className="fakecall-info">
                     <div className="fakecall-avatar">👤</div>
                     <div className="fakecall-name">{caller}</div>
