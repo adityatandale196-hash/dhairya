@@ -4,68 +4,83 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
-import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
 @Service
 public class SmsService {
 
+    private static final String SMS_URL = "https://www.circuitdigest.cloud/api/v1/sms/send";
+    private static final int TEMPLATE_ID = 110;
+
     @Value("${circuitdigest.api.key}")
     private String apiKey;
 
-    // We'll use Template ID 110 for Location Tracking
-    private static final String TEMPLATE_ID = "110";
+    @Value("${circuitdigest.phone.number}")
+    private String verifiedPhoneNumber;
 
     private final HttpClient client = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(10))
+            .connectTimeout(Duration.ofSeconds(15))
             .build();
 
     public boolean sendSms(String toNumber, String message) {
         try {
-            // CircuitDigest requires the number to be prefixed with 91 for India
-            String cleanNumber = toNumber.replaceAll("\\D", "");
-            if (cleanNumber.length() == 10) {
-                cleanNumber = "91" + cleanNumber;
+            String phoneNumber = normalizePhoneNumber(toNumber);
+            if (phoneNumber == null) {
+                System.err.println("SMS send failed: invalid phone number");
+                return false;
             }
 
-            // Parse the message to fit the template's two variables.
-            // We'll use the user's name (from the caller) and the full message.
-            // This is a simplified split; you can adapt it.
-            String var1 = "Dhairya User"; // You can pass the actual user name if you modify the method signature
-            String var2 = message; // For a real app, you might extract just the location link
+            if (verifiedPhoneNumber != null && !verifiedPhoneNumber.isBlank()) {
+                System.out.println("CircuitDigest verified number (config): " + verifiedPhoneNumber);
+            }
 
-            // Build the URL with the Template ID as a query parameter
-            String url = "https://www.circuitdigest.cloud/api/v1/send_sms?ID=" + TEMPLATE_ID;
+            String var1 = "Dhairya";
+            String var2 = message == null ? "" : message;
 
-            // Build the JSON body as required by the API
             String json = "{"
-                    + "\"mobiles\":\"" + cleanNumber + "\","
+                    + "\"phone_number\":\"" + escapeJson(phoneNumber) + "\","
+                    + "\"cd_sms_id\":" + TEMPLATE_ID + ","
+                    + "\"variables\":{"
                     + "\"var1\":\"" + escapeJson(var1) + "\","
                     + "\"var2\":\"" + escapeJson(var2) + "\""
+                    + "}"
                     + "}";
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
+                    .uri(URI.create(SMS_URL))
                     .timeout(Duration.ofSeconds(15))
-                    .header("Authorization", apiKey) // API key goes in the Authorization header
+                    .header("Authorization", apiKey)
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            String body = response.body() == null ? "" : response.body();
 
-            System.out.println("CircuitDigest response: " + response.statusCode() + " -> " + response.body());
-            // Success is indicated by a 200 status code and a "status":"success" in the body
-            return response.statusCode() == 200 && response.body().contains("\"status\":\"success\"");
+            System.out.println("CircuitDigest response: " + response.statusCode() + " " + body);
 
+            return response.statusCode() == 200 && body.replaceAll("\\s", "").contains("\"success\":true");
         } catch (Exception e) {
             System.err.println("SMS send failed: " + e.getMessage());
             return false;
         }
+    }
+
+    private String normalizePhoneNumber(String toNumber) {
+        if (toNumber == null) {
+            return null;
+        }
+        String digits = toNumber.replaceAll("\\D", "");
+        if (digits.isEmpty()) {
+            return null;
+        }
+        if (digits.length() == 10) {
+            digits = "91" + digits;
+        }
+        return "+" + digits;
     }
 
     private String escapeJson(String s) {

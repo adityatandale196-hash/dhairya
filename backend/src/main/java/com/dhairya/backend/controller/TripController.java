@@ -97,28 +97,28 @@ public class TripController {
         trip.setStatus("ESCALATED");
         tripRepository.save(trip);
 
-        // 🔥 AUTOMATIC SMS
         try {
-            var userOpt = userRepository.findById(userId);
-            if (userOpt.isPresent()) {
-                var user = userOpt.get();
+            userRepository.findById(userId).ifPresent(user -> {
                 var contacts = contactRepository.findByUserId(userId);
 
-                String mapsLink = "";
+                StringBuilder message = new StringBuilder();
+                message.append(user.getName())
+                        .append(" not reached ")
+                        .append(trip.getDestination())
+                        .append(".");
                 if (trip.getLatitude() != null && trip.getLongitude() != null) {
-                    mapsLink = " Last known location: https://maps.google.com/?q="
-                            + trip.getLatitude() + "," + trip.getLongitude();
+                    message.append(" Last known location: Latitude ")
+                            .append(trip.getLatitude())
+                            .append(", Longitude ")
+                            .append(trip.getLongitude());
                 }
+                message.append(" Call now.");
 
-                String message = "TRAVEL ALERT from Dhairya: " + user.getName()
-                        + " was travelling to " + trip.getDestination()
-                        + " and has not confirmed reaching safely."
-                        + mapsLink + " Please call them now.";
-
+                String smsBody = message.toString();
                 for (var contact : contacts) {
-                    smsService.sendSms(contact.getPhone(), message);
+                    smsService.sendSms(contact.getPhone(), smsBody);
                 }
-            }
+            });
         } catch (Exception e) {
             System.err.println("Auto SMS failed: " + e.getMessage());
         }

@@ -71,27 +71,26 @@ public class AlertController {
         alert.setStatus("ESCALATED");
         alertRepository.save(alert);
 
-        // 🔥 AUTOMATIC SMS — runs entirely on the server
         try {
-            var userOpt = userRepository.findById(userId);
-            if (userOpt.isPresent()) {
-                var user = userOpt.get();
+            userRepository.findById(userId).ifPresent(user -> {
                 var contacts = contactRepository.findByUserId(userId);
 
-                String mapsLink = "";
+                StringBuilder message = new StringBuilder();
+                message.append(user.getName())
+                        .append(" triggered a safety alert.");
                 if (alert.getLatitude() != null && alert.getLongitude() != null) {
-                    mapsLink = " Location: https://maps.google.com/?q="
-                            + alert.getLatitude() + "," + alert.getLongitude();
+                    message.append(" Location: Latitude ")
+                            .append(alert.getLatitude())
+                            .append(", Longitude ")
+                            .append(alert.getLongitude());
                 }
+                message.append(" Call now.");
 
-                String message = "EMERGENCY ALERT from Dhairya: " + user.getName()
-                        + " has triggered a safety alert and may need help."
-                        + mapsLink + " Please call them immediately.";
-
+                String smsBody = message.toString();
                 for (var contact : contacts) {
-                    smsService.sendSms(contact.getPhone(), message);
+                    smsService.sendSms(contact.getPhone(), smsBody);
                 }
-            }
+            });
         } catch (Exception e) {
             System.err.println("Auto SMS failed: " + e.getMessage());
         }
