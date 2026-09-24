@@ -18,9 +18,6 @@ public class SmsService {
     @Value("${circuitdigest.api.key}")
     private String apiKey;
 
-    @Value("${circuitdigest.phone.number}")
-    private String verifiedPhoneNumber;
-
     private final HttpClient client = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(15))
             .build();
@@ -31,10 +28,6 @@ public class SmsService {
             if (phoneNumber == null) {
                 System.err.println("SMS send failed: invalid phone number");
                 return false;
-            }
-
-            if (verifiedPhoneNumber != null && !verifiedPhoneNumber.isBlank()) {
-                System.out.println("CircuitDigest verified number (config): " + verifiedPhoneNumber);
             }
 
             String var1 = "Dhairya";
