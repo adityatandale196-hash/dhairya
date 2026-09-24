@@ -87,7 +87,17 @@ public class AlertController {
                 message.append(" Call now.");
 
                 String smsBody = message.toString();
+                boolean first = true;
                 for (var contact : contacts) {
+                    if (!first) {
+                        try {
+                            Thread.sleep(10000);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            break;
+                        }
+                    }
+                    first = false;
                     smsService.sendSms(contact.getPhone(), smsBody);
                 }
             });
