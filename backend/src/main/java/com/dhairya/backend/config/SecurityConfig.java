@@ -37,20 +37,18 @@ public class SecurityConfig {
                 // No sessions — every request carries its own token
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                // Authorize rules
+                // Authorize rules — AuthFilter already validated the token
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints — no token required
                         .requestMatchers("/api/users/login", "/api/users/register").permitAll()
                         .requestMatchers("/actuator/**", "/error").permitAll()
-                        // Everything else requires our AuthFilter to have validated the token
                         .anyRequest().permitAll()
                 )
 
-                // Disable HTTP Basic and form login so no browser popup appears
+                // Disable HTTP Basic and form login
                 .httpBasic(basic -> basic.disable())
                 .formLogin(form -> form.disable())
 
-                // Register our custom filter
+                // Register our custom token filter
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -64,10 +62,15 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
+
+        // Allow production URL, any Vercel preview URL, and local dev
         config.setAllowedOriginPatterns(List.of(
                 "https://dhairya-navy.vercel.app",
-                "http://localhost:5173"
+                "https://*.vercel.app",
+                "http://localhost:5173",
+                "http://localhost:3000"
         ));
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(false);
