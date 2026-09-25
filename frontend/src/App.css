@@ -1,4 +1,316 @@
-/* ===== SOS confirmation box ===== */
+/* ==========================================================
+   DHAIRYA — Global App Styles
+   ========================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f5f7fb;
+  color: #1f2937;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== App shell ===== */
+.app {
+  min-height: 100vh;
+  padding-bottom: 80px; /* space for bottom nav */
+  background: #f5f7fb;
+}
+
+/* ===== Top bar ===== */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  object-fit: contain;
+}
+
+.brand h1 {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+  color: #7c3aed;
+  letter-spacing: -0.3px;
+}
+
+.brand p {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.logout-btn {
+  padding: 8px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.logout-btn:hover {
+  background: #f3f4f6;
+  color: #dc2626;
+}
+
+/* ===== Home container ===== */
+.home-container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px 14px 20px;
+}
+
+/* ===== Welcome card ===== */
+.welcome-card {
+  width: 100%;
+  padding: 24px 20px;
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  border-radius: 22px;
+  text-align: center;
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.25);
+  margin-bottom: 18px;
+}
+
+.welcome-logo {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  margin: 0 auto 12px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 10px;
+}
+
+.small-text {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  opacity: 0.85;
+  margin: 0 0 6px;
+}
+
+.welcome-card h2 {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0 0 10px;
+}
+
+.welcome-description {
+  font-size: 13px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* ===== SOS button ===== */
+.sos-section {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.sos-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 140px;
+  height: 140px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+  padding: 0;
+}
+
+.sos-button:hover {
+  transform: scale(1.03);
+  box-shadow: 0 12px 30px rgba(220, 38, 38, 0.55);
+}
+
+.sos-button:active {
+  transform: scale(0.98);
+}
+
+.sos-icon {
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.sos-button > span:nth-child(2) {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.sos-button small {
+  font-size: 10px;
+  font-weight: 500;
+  opacity: 0.85;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+/* ===== Feature grid ===== */
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px 14px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  font-family: inherit;
+}
+
+.feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.12);
+  border-color: #c4b5fd;
+}
+
+.feature-card:active {
+  transform: translateY(0);
+}
+
+.feature-icon {
+  font-size: 26px;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.feature-card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 4px;
+  letter-spacing: -0.2px;
+}
+
+.feature-card p {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* ===== Bottom navigation ===== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 64px;
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  z-index: 20;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.04);
+  padding: 0 6px;
+}
+
+.bottom-nav button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  flex: 1;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-size: 11px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  padding: 0;
+}
+
+.bottom-nav button:hover {
+  color: #7c3aed;
+}
+
+.bottom-nav button span {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.bottom-nav button small {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* Center SOS bubble in the bottom nav */
+.bottom-nav .nav-sos {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
+  transform: translateY(-8px);
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.bottom-nav .nav-sos span {
+  font-size: 22px;
+  font-weight: 900;
+}
+
+/* ==========================================================
+   SOS confirmation (5-second hold)
+   ========================================================== */
 .sos-confirm-box {
   display: flex;
   flex-direction: column;
@@ -47,4 +359,40 @@
 
 .sos-cancel-btn:hover {
   background: #fef2f2;
+}
+
+/* ===== Mobile tweaks ===== */
+@media (max-width: 400px) {
+  .welcome-card {
+    padding: 20px 16px;
+  }
+
+  .welcome-card h2 {
+    font-size: 22px;
+  }
+
+  .sos-button {
+    width: 120px;
+    height: 120px;
+  }
+
+  .sos-icon {
+    font-size: 28px;
+  }
+
+  .sos-button > span:nth-child(2) {
+    font-size: 18px;
+  }
+
+  .feature-card {
+    padding: 14px 12px;
+  }
+
+  .feature-icon {
+    font-size: 22px;
+  }
+
+  .feature-card h3 {
+    font-size: 14px;
+  }
 }
