@@ -3,7 +3,7 @@ package com.dhairya.backend.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "contacts")
+@Table(name = "emergency_contacts")
 public class Contact {
 
     @Id
