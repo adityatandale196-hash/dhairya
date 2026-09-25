@@ -1,73 +1,142 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
+import { getLocation, mapLinkFor, whatsappLink, smsLink } from "../services/share";
 import { apiRequest } from "../services/api";
-import { getLocation, whatsappLink, smsLink, mapLinkFor } from "../services/share";
 import "./LiveLocation.css";
 
 function LiveLocation() {
     const stored = localStorage.getItem("dhairyaUser");
     const user = stored ? JSON.parse(stored) : null;
 
-    const [contacts, setContacts] = useState([]);
     const [location, setLocation] = useState(null);
-    const [warn, setWarn] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [contacts, setContacts] = useState([]);
+    const [lastUpdate, setLastUpdate] = useState(null);
 
     useEffect(() => {
-        async function load() {
-            if (!user) return;
-            const res = await apiRequest("GET", "/api/contacts?userId=" + user.userId);
-            if (res.ok) setContacts(res.data);
-        }
-        load();
-    }, []);
+        if (!user) return;
 
-    async function handleGetLocation() {
-        setWarn("");
-        const loc = await getLocation();
-        if (!loc) {
-            setWarn("Location unavailable. Allow location access in browser settings, then try again.");
-            return;
+        let cancelled = false;
+
+        async function load() {
+            const pos = await getLocation();
+            if (cancelled) return;
+            if (pos) {
+                setLocation(pos);
+                setLastUpdate(new Date());
+            } else {
+                setError("Could not get your location. Allow location access in your browser.");
+            }
+            setLoading(false);
+
+            try {
+                const res = await apiRequest("GET", "/api/contacts");
+                if (res.ok) setContacts(res.data);
+            } catch {
+                // ignore
+            }
         }
-        setLocation(loc);
-    }
+
+        load();
+
+        // Refresh every 30 seconds while page is open
+        const interval = setInterval(load, 30_000);
+        return () => {
+            cancelled = true;
+            clearInterval(interval);
+        };
+    }, []);
 
     if (!user) return <Navigate to="/login" replace />;
 
     const mapLink = mapLinkFor(location);
-    const msg = "My current location: " + (mapLink || "Location not available.");
+    const message = location
+        ? "Live location from " + user.name + ": " + mapLink + " (shared via Dhairya)"
+        : "Live location from " + user.name + " (location unavailable)";
+
+    function copyLink() {
+        if (!mapLink) return;
+        navigator.clipboard.writeText(mapLink).then(
+            () => alert("Location link copied"),
+            () => alert("Could not copy")
+        );
+    }
 
     return (
         <div className="ll-page">
             <div className="ll-card">
-                <div className="ll-header">
-                    <Link to="/" className="ll-back">← Back</Link>
-                    <h1 className="ll-title">📍 Share Location</h1>
-                </div>
+                <Link to="/" className="ll-back">← Back</Link>
 
-                <p>Get your current GPS location and share it with your trusted contacts instantly via WhatsApp or SMS.</p>
+                <h1 className="ll-title">📍 Live Location</h1>
+                <p className="ll-text">
+                    Share your current location with your trusted circle. This page
+                    refreshes automatically every 30 seconds while open.
+                </p>
 
-                {warn && <div className="ll-warn">{warn}</div>}
+                {loading && <p className="ll-status">Getting your location...</p>}
 
-                <button className="ll-refresh" onClick={handleGetLocation}>
-                    Get My Location
-                </button>
+                {error && <div className="ll-warn">{error}</div>}
 
                 {location && (
-                    <div style={{ marginTop: "20px" }}>
-                        <p style={{ color: "#16a34a", fontWeight: "bold" }}>✓ Location found</p>
-                        <a href={mapLink} target="_blank" rel="noreferrer" style={{ color: "#7c3aed" }}>Open in Google Maps</a>
-                    </div>
+                    <>
+                        <div className="ll-coords">
+                            <div className="ll-coord-row">
+                                <span className="ll-coord-label">Latitude</span>
+                                <span className="ll-coord-value">{location.latitude.toFixed(6)}</span>
+                            </div>
+                            <div className="ll-coord-row">
+                                <span className="ll-coord-label">Longitude</span>
+                                <span className="ll-coord-value">{location.longitude.toFixed(6)}</span>
+                            </div>
+                            {lastUpdate && (
+                                <div className="ll-coord-row">
+                                    <span className="ll-coord-label">Updated</span>
+                                    <span className="ll-coord-value">
+                    {lastUpdate.toLocaleTimeString()}
+                  </span>
+                                </div>
+                            )}
+                        </div>
+
+                        <a
+                            className="ll-map-btn"
+                            href={mapLink}
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            🗺️ Open in Google Maps
+                        </a>
+
+                        <button className="ll-copy-btn" onClick={copyLink}>
+                            📋 Copy location link
+                        </button>
+                    </>
                 )}
 
-                <h3 style={{ marginTop: "30px", marginBottom: "10px" }}>Share with your contacts</h3>
+                <h2 className="ll-section-title">Share with your trusted circle</h2>
+
+                {contacts.length === 0 && (
+                    <p className="ll-empty">
+                        You have no contacts yet. <Link to="/contacts">Add contacts</Link>
+                    </p>
+                )}
+
                 {contacts.map((c) => (
                     <div className="ll-contact" key={c.contactId}>
                         <div className="ll-contact-name">{c.name}</div>
-                        <div className="ll-contact-info">{c.phone} · {c.relationship}</div>
-                        <div className="ll-actions">
-                            <a className="ll-btn ll-whatsapp" href={whatsappLink(c.phone, msg)} target="_blank" rel="noreferrer">WhatsApp</a>
-                            <a className="ll-btn ll-sms" href={smsLink(c.phone, msg)}>SMS</a>
-                            <a className="ll-btn ll-call" href={"tel:" + c.phone}>Call</a>
+                        <div className="ll-contact-actions">
+                            <a
+                                className="ll-action-whatsapp"
+                                href={whatsappLink(c.phone, message)}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                WhatsApp
+                            </a>
+                            <a className="ll-action-sms" href={smsLink(c.phone, message)}>
+                                SMS
+                            </a>
                         </div>
                     </div>
                 ))}

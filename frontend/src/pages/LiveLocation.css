@@ -1,105 +1,193 @@
 .ll-page {
     min-height: 100vh;
-    background-color: var(--bg-color);
-    color: var(--text-main);
-    padding: 16px;
+    background: var(--bg);
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
+    padding: 20px 14px 60px;
+    transition: background-color 0.2s ease;
 }
 
 .ll-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    padding: 24px 16px;
     width: 100%;
-    max-width: 500px;
-    margin-top: 20px;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
-}
-
-.ll-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
+    max-width: 460px;
+    padding: 20px 16px;
+    text-align: center;
 }
 
 .ll-back {
-    color: #7c3aed;
+    display: inline-block;
+    color: var(--primary);
     font-weight: 600;
     text-decoration: none;
-    font-size: 15px;
+    margin-bottom: 14px;
+    font-size: 14px;
 }
 
 .ll-title {
-    font-size: 20px;
-    margin: 0;
-    color: var(--text-main);
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text);
+    margin: 6px 0 10px;
+}
+
+.ll-text {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 20px;
+}
+
+.ll-status {
+    color: var(--text-muted);
+    font-size: 14px;
+    padding: 20px 0;
 }
 
 .ll-warn {
-    background: #fef3c7;
-    color: #92400e;
-    padding: 12px;
+    background: var(--warning-soft);
+    color: var(--warning-text);
     border-radius: 10px;
-    font-size: 13px;
-    margin-bottom: 16px;
+    padding: 12px;
+    font-size: 14px;
+    margin: 12px 0;
 }
 
-.ll-contact {
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border-color);
+.ll-coords {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin: 16px 0;
 }
 
-.ll-contact:last-child {
+.ll-coord-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+}
+
+.ll-coord-row:last-child {
     border-bottom: none;
 }
 
-.ll-contact-name {
-    font-weight: 700;
-    font-size: 15px;
-    color: var(--text-main);
+.ll-coord-label {
+    color: var(--text-muted);
+    font-weight: 600;
 }
 
-.ll-contact-info {
-    font-size: 13px;
+.ll-coord-value {
+    color: var(--text);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.ll-map-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--primary-2) 0%, var(--primary) 100%);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ll-map-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(124, 58, 237, 0.5);
+}
+
+.ll-copy-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0 24px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.ll-copy-btn:hover {
+    background: var(--surface-3);
+    border-color: var(--primary);
+}
+
+.ll-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    text-align: left;
+    margin: 20px 0 12px;
+}
+
+.ll-empty {
     color: var(--text-muted);
+    font-size: 14px;
+    text-align: left;
+    margin: 0;
+}
+
+.ll-empty a {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.ll-contact {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px;
+    margin: 8px 0;
+    text-align: left;
+}
+
+.ll-contact-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
     margin-bottom: 8px;
 }
 
-.ll-actions {
-    display: flex;
+.ll-contact-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
 }
 
-.ll-btn {
-    flex: 1;
-    padding: 12px 6px;
-    border-radius: 12px;
+.ll-action-whatsapp,
+.ll-action-sms {
+    padding: 10px;
+    border-radius: 10px;
     text-align: center;
-    font-size: 14px;
+    color: #ffffff;
+    font-size: 13px;
     font-weight: 700;
     text-decoration: none;
-    color: white !important;
-    cursor: pointer;
-    border: none;
+    transition: filter 0.15s ease;
 }
 
-.ll-whatsapp { background: #16a34a; }
-.ll-sms { background: #7c3aed; }
-.ll-call { background: #374151; }
+.ll-action-whatsapp {
+    background: linear-gradient(135deg, #25d366 0%, #16a34a 100%);
+}
 
-.ll-refresh {
-    width: 100%;
-    padding: 16px;
-    border-radius: 14px;
-    background: #7c3aed;
-    color: white !important;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+.ll-action-sms {
+    background: linear-gradient(135deg, var(--primary-2) 0%, var(--primary) 100%);
+}
+
+.ll-action-whatsapp:hover,
+.ll-action-sms:hover {
+    filter: brightness(1.1);
 }
