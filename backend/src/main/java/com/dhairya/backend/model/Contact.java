@@ -3,7 +3,7 @@ package com.dhairya.backend.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "emergency_contacts")
+@Table(name = "contacts")
 public class Contact {
 
     @Id
@@ -11,11 +11,19 @@ public class Contact {
     @Column(name = "contact_id")
     private Integer contactId;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private Integer userId;
 
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "phone", nullable = false)
     private String phone;
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "relationship")
     private String relationship;
 
     public Integer getContactId() { return contactId; }
@@ -29,6 +37,9 @@ public class Contact {
 
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
     public String getRelationship() { return relationship; }
     public void setRelationship(String relationship) { this.relationship = relationship; }

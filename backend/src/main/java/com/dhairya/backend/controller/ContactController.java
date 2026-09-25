@@ -19,7 +19,8 @@ public class ContactController {
     private final ContactRepository contactRepository;
     private final UserRepository userRepository;
 
-    public ContactController(ContactRepository contactRepository, UserRepository userRepository) {
+    public ContactController(ContactRepository contactRepository,
+                             UserRepository userRepository) {
         this.contactRepository = contactRepository;
         this.userRepository = userRepository;
     }
@@ -45,12 +46,14 @@ public class ContactController {
         contact.setUserId(req.userId());
         contact.setName(req.name().trim());
         contact.setPhone(req.phone().trim());
+        contact.setEmail(req.email() == null ? null : req.email().trim());
         contact.setRelationship(req.relationship());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(contactRepository.save(contact));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(contactRepository.save(contact));
     }
 
-    // EDIT a contact
+    // UPDATE a contact
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable("id") Integer id,
                                          @RequestBody ContactRequest req) {
@@ -67,6 +70,7 @@ public class ContactController {
         Contact contact = found.get();
         contact.setName(req.name().trim());
         contact.setPhone(req.phone().trim());
+        contact.setEmail(req.email() == null ? null : req.email().trim());
         contact.setRelationship(req.relationship());
 
         return ResponseEntity.ok(contactRepository.save(contact));
@@ -80,31 +84,24 @@ public class ContactController {
         if (found.isEmpty()) {
             return error(HttpStatus.NOT_FOUND, "Contact not found");
         }
-
         contactRepository.delete(found.get());
-        return ResponseEntity.ok(Map.of("success", true, "message", "Contact deleted"));
+        return ResponseEntity.ok(Map.of("success", true));
     }
 
     private String validate(ContactRequest req) {
-        if (req.userId() == null) {
-            return "User id is required";
-        }
-        if (req.name() == null || req.name().isBlank()) {
-            return "Name is required";
-        }
-        if (req.name().trim().length() > 100) {
-            return "Name is too long";
-        }
-        if (req.phone() == null || req.phone().isBlank()) {
-            return "Phone number is required";
-        }
-        if (req.phone().trim().length() > 15) {
-            return "Phone number can be at most 15 characters";
+        if (req.userId() == null) return "User id is required";
+        if (req.name() == null || req.name().isBlank()) return "Name is required";
+        if (req.phone() == null || req.phone().isBlank()) return "Phone is required";
+        String digits = req.phone().replaceAll("\\D", "");
+        if (digits.length() < 10) return "Phone must be at least 10 digits";
+        if (req.email() != null && !req.email().isBlank() && !req.email().contains("@")) {
+            return "Email looks invalid";
         }
         return null;
     }
 
     private ResponseEntity<Object> error(HttpStatus status, String message) {
-        return ResponseEntity.status(status).body(Map.of("success", false, "message", message));
+        return ResponseEntity.status(status)
+                .body(Map.of("success", false, "message", message));
     }
 }
