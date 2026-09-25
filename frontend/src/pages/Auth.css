@@ -1,103 +1,154 @@
+/* ==========================================================
+   Auth pages (Login + Register)
+   ========================================================== */
 .auth-page {
     min-height: 100vh;
+    background: var(--bg);
     display: flex;
-    align-items: center;
     justify-content: center;
-    padding: 20px;
-    background: #f5f7fb;
+    align-items: flex-start;
+    padding: 40px 16px;
+    transition: background-color 0.2s ease;
 }
 
 .auth-card {
     width: 100%;
     max-width: 400px;
-    background: #ffffff;
-    border-radius: 24px;
-    padding: 28px 22px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 32px 24px;
+    box-shadow: var(--shadow-md);
     text-align: center;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .auth-logo {
-    width: 120px;
-    margin: 0 auto 10px;
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    margin: 0 auto 16px;
 }
 
 .auth-card h2 {
     font-size: 24px;
-    margin-bottom: 4px;
+    font-weight: 800;
+    color: var(--text);
+    margin: 0 0 6px;
+    letter-spacing: -0.3px;
 }
 
 .auth-subtitle {
-    color: #6b7280;
-    font-size: 14px;
-    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0 0 20px;
 }
 
+/* Success banner (shown after registration) */
+.auth-success {
+    background: var(--success-soft);
+    color: var(--success-text);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    text-align: left;
+}
+
+/* Error banner */
+.auth-error {
+    background: var(--danger-soft);
+    color: var(--danger);
+    border: 1px solid var(--danger-border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    text-align: left;
+}
+
+/* Form */
 .auth-form {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
     text-align: left;
 }
 
 .auth-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     font-size: 13px;
     font-weight: 600;
+    color: var(--text);
 }
 
 .auth-form input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #d1d5db;
+    padding: 12px 14px;
+    border: 1px solid var(--input-border);
     border-radius: 12px;
-    font-size: 16px;
-    margin-top: 4px;
+    background: var(--input-bg);
+    color: var(--input-text);
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s ease, background-color 0.2s ease;
+}
+
+.auth-form input::placeholder {
+    color: var(--input-placeholder);
 }
 
 .auth-form input:focus {
-    outline: 2px solid #7c3aed;
-    border-color: transparent;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
 }
 
+/* Primary button */
 .auth-button {
-    margin-top: 6px;
-    padding: 14px;
+    width: 100%;
+    padding: 15px;
     border: none;
-    border-radius: 14px;
-    background: #7c3aed;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
     color: #ffffff;
     font-size: 16px;
     font-weight: 700;
+    cursor: pointer;
+    margin-top: 6px;
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.auth-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(124, 58, 237, 0.5);
+}
+
+.auth-button:active:not(:disabled) {
+    transform: translateY(1px);
 }
 
 .auth-button:disabled {
     opacity: 0.6;
+    cursor: not-allowed;
 }
 
-.auth-error {
-    background: #fee2e2;
-    color: #b91c1c;
-    border-radius: 10px;
-    padding: 10px;
-    font-size: 14px;
-}
-
-.auth-success {
-    background: #dcfce7;
-    color: #166534;
-    border-radius: 10px;
-    padding: 10px;
-    font-size: 14px;
-    margin-bottom: 12px;
-}
-
+/* Footer link */
 .auth-link {
-    margin-top: 16px;
-    font-size: 14px;
-    color: #6b7280;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 20px;
+    text-align: center;
 }
 
 .auth-link a {
-    color: #7c3aed;
-    font-weight: 600;
+    color: var(--primary);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.auth-link a:hover {
+    text-decoration: underline;
 }

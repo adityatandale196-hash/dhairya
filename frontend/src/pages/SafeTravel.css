@@ -1,160 +1,326 @@
+/* ==========================================================
+   Safe Travel
+   ========================================================== */
 .st-page {
     min-height: 100vh;
-    background-color: var(--bg-color);
-    color: var(--text-main);
-    padding: 16px;
+    background: var(--bg);
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
+    padding: 20px 14px 40px;
+    transition: background-color 0.2s ease;
+}
+
+.st-page-alert {
+    background: var(--danger-soft);
 }
 
 .st-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    padding: 24px 16px;
     width: 100%;
-    max-width: 500px;
+    max-width: 460px;
+    height: fit-content;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 26px 18px;
     text-align: center;
-    margin-top: 20px;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-md);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .st-back {
-    display: block;
-    text-align: left;
-    color: #7c3aed;
+    display: inline-block;
+    color: var(--primary);
     font-weight: 600;
     text-decoration: none;
-    margin-bottom: 10px;
+    margin-bottom: 14px;
+    font-size: 14px;
 }
 
-.st-input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid var(--border-color);
-    background-color: var(--input-bg);
-    color: var(--text-main);
-    margin-bottom: 12px;
-    font-size: 15px;
+.st-card h1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text);
+    margin: 0 0 8px;
 }
 
-.st-start {
-    width: 100%;
-    padding: 14px;
-    border-radius: 12px;
-    background: #7c3aed;
-    color: white;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
+.st-card h2 {
     font-size: 16px;
-    margin-top: 10px;
+    font-weight: 700;
+    color: var(--text);
+    text-align: left;
+    margin: 18px 0 8px;
 }
 
-.st-timer {
-    font-size: 48px;
-    font-weight: bold;
-    color: #7c3aed;
-    margin: 20px 0;
-}
-
-.st-timer-red {
-    color: #dc2626;
-    animation: pulse 1s infinite;
-}
-
-.st-answers {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.st-yes {
-    flex: 1;
-    padding: 14px;
-    border-radius: 12px;
-    background: #16a34a;
-    color: white;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-}
-
-.st-no {
-    flex: 1;
-    padding: 14px;
-    border-radius: 12px;
-    background: #dc2626;
-    color: white;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-}
-
-.st-call {
-    display: block;
-    padding: 14px;
-    border-radius: 12px;
-    background: #dc2626;
-    color: white;
-    font-weight: bold;
-    text-decoration: none;
-    margin-top: 20px;
-}
-
-.st-safe {
-    width: 100%;
-    padding: 14px;
-    border-radius: 12px;
-    background: #16a34a;
-    color: white;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.st-warn {
-    background: #fef3c7;
-    color: #92400e;
-    padding: 12px;
-    border-radius: 10px;
-    font-size: 13px;
-    margin-bottom: 10px;
-}
-
-.st-ok {
-    background: #dcfce7;
-    color: #166534;
-    padding: 12px;
-    border-radius: 10px;
-    font-size: 13px;
-    margin-top: 10px;
-}
-
-.st-note {
-    font-size: 12px;
+.st-text {
     color: var(--text-muted);
-    margin-top: 16px;
-    line-height: 1.4;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 12px;
 }
 
 .st-label {
     display: block;
     text-align: left;
     font-size: 13px;
-    color: var(--text-muted);
-    margin-bottom: 6px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 16px 0 6px;
+}
+
+.st-input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--input-border);
+    border-radius: 12px;
+    background: var(--input-bg);
+    color: var(--input-text);
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s ease, background-color 0.2s ease;
+}
+
+.st-input::placeholder {
+    color: var(--input-placeholder);
+}
+
+.st-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
 }
 
 .st-demo {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
+    margin-top: 18px;
     font-size: 13px;
     color: var(--text-muted);
-    margin-bottom: 10px;
     cursor: pointer;
+}
+
+.st-demo input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+}
+
+.st-start {
+    width: 100%;
+    margin-top: 22px;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--primary-2) 0%, var(--primary) 100%);
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.st-start:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(124, 58, 237, 0.55);
+}
+
+.st-start:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+.st-start:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.st-timer {
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--primary);
+    margin: 14px 0 6px;
+    letter-spacing: 1px;
+    font-variant-numeric: tabular-nums;
+}
+
+.st-timer-red {
+    color: var(--danger);
+}
+
+.st-answers {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.st-yes,
+.st-no {
+    flex: 1;
+    padding: 16px 8px;
+    border: none;
+    border-radius: 14px;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.st-yes {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+}
+
+.st-no {
+    background: linear-gradient(135deg, var(--danger) 0%, var(--danger-2) 100%);
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
+}
+
+.st-yes:hover,
+.st-no:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+.st-yes:active,
+.st-no:active {
+    transform: translateY(1px);
+}
+
+.st-ok {
+    background: var(--success-soft);
+    color: var(--success-text);
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 14px;
+    margin-top: 12px;
+}
+
+.st-warn {
+    background: var(--warning-soft);
+    color: var(--warning-text);
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 14px;
+    margin-top: 12px;
+}
+
+.st-call {
+    display: block;
+    padding: 16px;
+    margin-top: 16px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--danger) 0%, var(--danger-2) 100%);
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.st-call:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(220, 38, 38, 0.55);
+}
+
+/* ===== Contact blocks ===== */
+.st-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+
+.st-contact:last-child {
+    border-bottom: none;
+}
+
+.st-contact-name {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text);
+}
+
+.st-contact-phone {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.st-contact-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.st-contact-buttons a {
+    flex: 1;
+    padding: 12px 6px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    color: #ffffff;
+    transition: filter 0.15s ease, transform 0.1s ease;
+}
+
+.st-contact-buttons a:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.st-contact-buttons a:active {
+    transform: translateY(1px);
+}
+
+.st-whatsapp {
+    background: linear-gradient(135deg, #25d366 0%, #16a34a 100%);
+}
+
+.st-sms {
+    background: linear-gradient(135deg, var(--primary-2) 0%, var(--primary) 100%);
+}
+
+.st-tel {
+    background: linear-gradient(135deg, #4b5563 0%, #1f2937 100%);
+}
+
+.st-empty {
+    color: var(--text-muted);
+    font-size: 14px;
+    text-align: left;
+}
+
+.st-empty a {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.st-safe {
+    width: 100%;
+    margin-top: 18px;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface-2);
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.st-safe:hover {
+    background: var(--surface-3);
+    border-color: var(--primary);
+}
+
+.st-note {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
 }

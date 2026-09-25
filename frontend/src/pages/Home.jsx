@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { clearToken } from "../services/api";
+import { useTheme } from "../services/useTheme";
 import "../App.css";
 import dhairyaLogo from "../assets/logo.png";
 
@@ -17,6 +18,7 @@ function Home() {
     const navigate = useNavigate();
     const [confirming, setConfirming] = useState(false);
     const [holdProgress, setHoldProgress] = useState(0);
+    const { theme, toggleTheme } = useTheme();
 
     const stored = localStorage.getItem("dhairyaUser");
     const user = stored ? JSON.parse(stored) : null;
@@ -73,7 +75,18 @@ function Home() {
                         <p>Hi, {user.name}</p>
                     </div>
                 </div>
-                <button className="logout-btn" onClick={handleLogout}>Logout</button>
+
+                <div className="top-bar-actions">
+                    <button
+                        className="theme-toggle"
+                        onClick={toggleTheme}
+                        title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                        aria-label="Toggle theme"
+                    >
+                        {theme === "dark" ? "☀️" : "🌙"}
+                    </button>
+                    <button className="logout-btn" onClick={handleLogout}>Logout</button>
+                </div>
             </header>
 
             {/* Main Content */}

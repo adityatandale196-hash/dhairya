@@ -1,10 +1,13 @@
-/* ===== Page layout ===== */
+/* ==========================================================
+   SOS page
+   ========================================================== */
 .sos-page {
     min-height: 100vh;
-    background: #0f172a;
+    background: var(--bg);
     display: flex;
     justify-content: center;
     padding: 20px 14px 60px;
+    transition: background-color 0.2s ease;
 }
 
 .sos-card {
@@ -16,7 +19,7 @@
 
 .sos-back {
     display: inline-block;
-    color: #a78bfa;
+    color: var(--primary);
     font-weight: 600;
     text-decoration: none;
     margin-bottom: 14px;
@@ -26,18 +29,18 @@
 .sos-title {
     font-size: 26px;
     font-weight: 800;
-    color: #f9fafb;
+    color: var(--text);
     margin: 6px 0 14px;
 }
 
 .sos-status {
-    color: #9ca3af;
+    color: var(--text-muted);
     font-size: 14px;
     margin: 10px 0;
 }
 
 .sos-section-title {
-    color: #f9fafb;
+    color: var(--text);
     font-size: 18px;
     font-weight: 700;
     margin: 24px 0 12px;
@@ -54,19 +57,19 @@
 }
 
 .sos-badge-ok {
-    background: rgba(22, 163, 74, 0.15);
-    color: #4ade80;
-    border: 1px solid rgba(34, 197, 94, 0.35);
+    background: var(--success-soft);
+    color: var(--success-text);
+    border: 1px solid var(--success);
 }
 
 .sos-badge-warn {
-    background: rgba(245, 158, 11, 0.15);
-    color: #fbbf24;
-    border: 1px solid rgba(245, 158, 11, 0.35);
+    background: var(--warning-soft);
+    color: var(--warning-text);
+    border: 1px solid var(--warning);
 }
 
 .sos-map-link {
-    color: #60a5fa;
+    color: var(--info);
     text-decoration: underline;
     margin-left: 4px;
 }
@@ -79,7 +82,7 @@
     margin: 18px auto;
     padding: 18px 20px;
     border-radius: 16px;
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    background: linear-gradient(135deg, var(--danger) 0%, var(--danger-2) 100%);
     color: #ffffff;
     font-size: 18px;
     font-weight: 800;
@@ -87,7 +90,7 @@
     text-align: center;
     text-decoration: none;
     box-shadow: 0 6px 20px rgba(220, 38, 38, 0.45);
-    border: 2px solid #fca5a5;
+    border: 2px solid var(--danger-border);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
     animation: sos-pulse 1.8s ease-in-out infinite;
 }
@@ -131,12 +134,12 @@
 }
 
 .sos-alert-all {
-    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+    background: linear-gradient(135deg, var(--danger) 0%, var(--danger-2) 100%);
     box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
 }
 
 .sos-sms-all {
-    background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, var(--primary-2) 0%, var(--primary) 100%);
     box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4);
 }
 
@@ -152,7 +155,7 @@
 }
 
 .sos-note {
-    color: #6b7280;
+    color: var(--text-muted);
     font-size: 12px;
     margin: 8px auto 16px;
     max-width: 380px;
@@ -160,37 +163,38 @@
 }
 
 .sos-empty {
-    color: #9ca3af;
+    color: var(--text-muted);
     font-size: 14px;
     margin: 20px 0;
 }
 
 .sos-empty a {
-    color: #a78bfa;
+    color: var(--primary);
     font-weight: 700;
 }
 
 /* ===== Contact cards ===== */
 .sos-contact-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 16px;
     padding: 14px;
     margin: 12px auto;
     max-width: 420px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .sos-contact-name {
     font-size: 17px;
     font-weight: 700;
-    color: #f3f4f6;
+    color: var(--text);
     margin-bottom: 2px;
     text-align: center;
 }
 
 .sos-contact-meta {
     font-size: 13px;
-    color: #9ca3af;
+    color: var(--text-muted);
     text-align: center;
     margin-bottom: 10px;
 }
@@ -221,7 +225,7 @@
 }
 
 .sos-action-sms {
-    background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, var(--primary-2) 0%, var(--primary) 100%);
 }
 
 .sos-action-call {
@@ -248,16 +252,16 @@
     max-width: 380px;
     margin: 24px auto 0;
     padding: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid var(--border);
     border-radius: 14px;
-    background: transparent;
-    color: #e5e7eb;
+    background: var(--surface);
+    color: var(--text);
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
-    transition: background 0.15s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .sos-safe:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--surface-3);
 }

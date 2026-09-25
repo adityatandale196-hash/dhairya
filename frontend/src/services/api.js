@@ -1,5 +1,5 @@
 // Vercel env var, falls back to localhost for local dev
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://dhairya-api.onrender.com";
 
 function getToken() {
     return localStorage.getItem("dhairyaToken");

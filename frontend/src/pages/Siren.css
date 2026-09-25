@@ -1,53 +1,111 @@
+/* ==========================================================
+   Emergency Siren
+   ========================================================== */
 .siren-page {
     min-height: 100vh;
-    background-color: var(--bg-color);
-    color: var(--text-main);
+    background: var(--bg);
+    color: var(--text);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 40px 20px;
     text-align: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .siren-page h1 {
-    font-size: 24px;
-    margin-bottom: 10px;
-    color: var(--text-main);
+    font-size: 28px;
+    font-weight: 800;
+    margin: 10px 0 12px;
+    color: var(--text);
 }
 
-.siren-page p {
+.siren-back {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.siren-back:hover {
+    text-decoration: underline;
+}
+
+.siren-text {
     color: var(--text-muted);
-    margin-bottom: 30px;
+    font-size: 15px;
+    line-height: 1.5;
+    max-width: 380px;
+    margin: 0 0 30px;
 }
 
 .siren-button {
     width: 200px;
     height: 200px;
     border-radius: 50%;
-    background: #dc2626;
-    color: white;
     border: none;
-    font-size: 24px;
-    font-weight: bold;
+    background: linear-gradient(135deg, var(--danger) 0%, var(--danger-2) 100%);
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 1px;
     cursor: pointer;
-    box-shadow: 0 0 20px rgba(220, 38, 38, 0.6);
-    animation: sirenFlash 0.5s infinite alternate;
-    margin-bottom: 30px;
+    box-shadow: 0 8px 30px rgba(220, 38, 38, 0.5);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.siren-button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 12px 40px rgba(220, 38, 38, 0.65);
+}
+
+.siren-button:active {
+    transform: scale(0.97);
+}
+
+/* When siren is ON — button turns dark and pulses */
+.siren-button-on {
+    background: linear-gradient(135deg, #374151 0%, #111827 100%);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    animation: sirenPulse 1s ease-in-out infinite;
+}
+
+@keyframes sirenPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    }
+    50% {
+        transform: scale(1.04);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+    }
+}
+
+/* Page flashes red when siren is active */
+.siren-page.siren-on {
+    animation: sirenFlash 0.8s ease-in-out infinite;
 }
 
 @keyframes sirenFlash {
-    from { background: #dc2626; box-shadow: 0 0 20px rgba(220, 38, 38, 0.6); }
-    to { background: #7f1d1d; box-shadow: 0 0 40px rgba(220, 38, 38, 0.9); }
+    0%, 100% {
+        background: var(--bg);
+    }
+    50% {
+        background: var(--danger-soft);
+    }
 }
 
-.siren-stop {
-    background: var(--card-bg);
-    color: var(--text-main);
-    border: 2px solid var(--border-color);
-    padding: 12px 30px;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
+.siren-note {
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.5;
+    max-width: 380px;
+    margin-top: 30px;
 }
