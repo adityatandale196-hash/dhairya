@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { clearToken } from "../services/api";
 import { useTheme } from "../services/useTheme";
 import "../App.css";
@@ -8,7 +8,7 @@ import dhairyaLogo from "../assets/logo.png";
 const features = [
     { icon: "🛡️", title: "Safety Check", text: "Check your safety", path: "/safety-check" },
     { icon: "🚗", title: "Safe Travel", text: "Track your journey", path: "/safe-travel" },
-    { icon: "📍", title: "Live Location", text: "Share your location", path: null },
+    { icon: "📍", title: "Live Location", text: "Share your location", path: "/live-location" },
     { icon: "👥", title: "Trusted Circle", text: "Your trusted people", path: "/contacts" },
     { icon: "📞", title: "Fake Call", text: "Get a simulated call", path: "/fake-call" },
     { icon: "🔊", title: "Emergency Siren", text: "Activate siren", path: "/siren" },
@@ -149,31 +149,31 @@ function Home() {
                 </section>
             </main>
 
-            {/* Bottom Navigation */}
+            {/* Bottom Navigation — using Link for reliable navigation */}
             <nav className="bottom-nav">
-                <button onClick={() => navigate("/")}>
+                <Link to="/" className="bottom-nav-item">
                     <span>⌂</span>
                     <small>Home</small>
-                </button>
+                </Link>
 
-                <button>
+                <Link to="/live-location" className="bottom-nav-item">
                     <span>📍</span>
                     <small>Location</small>
-                </button>
+                </Link>
 
                 <button className="nav-sos" onClick={handleSosTap}>
                     <span>!</span>
                 </button>
 
-                <button onClick={() => navigate("/contacts")}>
+                <Link to="/contacts" className="bottom-nav-item">
                     <span>👥</span>
                     <small>Contacts</small>
-                </button>
+                </Link>
 
-                <button>
+                <Link to="/settings" className="bottom-nav-item">
                     <span>⚙️</span>
                     <small>Settings</small>
-                </button>
+                </Link>
             </nav>
 
         </div>

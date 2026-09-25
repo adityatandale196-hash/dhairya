@@ -433,4 +433,34 @@
   .feature-card h3 {
     font-size: 14px;
   }
+}/* ==========================================================
+   Bottom nav items (Link-based)
+   ========================================================== */
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  flex: 1;
+  height: 100%;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 11px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.bottom-nav-item:hover {
+  color: var(--primary);
+}
+
+.bottom-nav-item span {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.bottom-nav-item small {
+  font-size: 10px;
+  font-weight: 600;
 }
