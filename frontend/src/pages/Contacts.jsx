@@ -116,14 +116,19 @@ function Contacts() {
         <div className="contacts-page">
             <header className="contacts-header">
                 <Link to="/" className="contacts-back">← Back</Link>
-                <h1>Emergency Contacts</h1>
+                <h1>Trusted Circle</h1>
+                <p className="contacts-subtitle">
+                    People who receive your emergency alerts
+                </p>
             </header>
 
             <main className="contacts-body">
 
                 {/* Add / Edit form */}
                 <section className="contacts-card">
-                    <h2>{editingId ? "Edit Contact" : "Add Contact"}</h2>
+                    <h2 className="contacts-card-title">
+                        {editingId ? "✏️ Edit Contact" : "➕ Add Contact"}
+                    </h2>
 
                     <form className="contacts-form" onSubmit={handleSubmit}>
                         {error && <div className="contacts-error">{error}</div>}
@@ -135,6 +140,7 @@ function Contacts() {
                                 name="name"
                                 value={form.name}
                                 onChange={handleChange}
+                                placeholder="e.g. Mom"
                                 required
                             />
                         </label>
@@ -147,6 +153,7 @@ function Contacts() {
                                 value={form.phone}
                                 onChange={handleChange}
                                 maxLength={15}
+                                placeholder="10-digit mobile number"
                                 required
                             />
                         </label>
@@ -185,7 +192,7 @@ function Contacts() {
                                 type="submit"
                                 disabled={saving}
                             >
-                                {saving ? "Saving..." : editingId ? "Update" : "Add Contact"}
+                                {saving ? "Saving..." : editingId ? "💾 Update" : "➕ Add Contact"}
                             </button>
 
                             {editingId && (
@@ -203,7 +210,9 @@ function Contacts() {
 
                 {/* Contact list */}
                 <section className="contacts-card">
-                    <h2>Your Contacts</h2>
+                    <h2 className="contacts-card-title">
+                        👥 Your Trusted Circle ({contacts.length})
+                    </h2>
 
                     {loading && <p className="contacts-empty">Loading...</p>}
 
@@ -215,20 +224,21 @@ function Contacts() {
 
                     {contacts.map((contact) => (
                         <div className="contact-item" key={contact.contactId}>
+                            <div className="contact-avatar">
+                                {contact.name.charAt(0).toUpperCase()}
+                            </div>
+
                             <div className="contact-info">
                                 <h3>{contact.name}</h3>
-                                <p>
-                                    {contact.phone}
-                                    {contact.relationship ? ` · ${contact.relationship}` : ""}
-                                </p>
-                                {contact.email && (
-                                    <p style={{ fontSize: "12px", color: "#7c3aed" }}>
-                                        📧 {contact.email}
-                                    </p>
+                                <p className="contact-phone">{contact.phone}</p>
+                                {contact.relationship && (
+                                    <span className="contact-tag">{contact.relationship}</span>
                                 )}
-                                {!contact.email && (
-                                    <p style={{ fontSize: "12px", color: "#f59e0b" }}>
-                                        ⚠️ No email — add one for auto alerts
+                                {contact.email ? (
+                                    <p className="contact-email">📧 {contact.email}</p>
+                                ) : (
+                                    <p className="contact-warning">
+                                        ⚠️ No email — add for auto alerts
                                     </p>
                                 )}
                             </div>
@@ -237,14 +247,16 @@ function Contacts() {
                                 <button
                                     className="contact-edit"
                                     onClick={() => handleEdit(contact)}
+                                    title="Edit"
                                 >
-                                    Edit
+                                    ✏️
                                 </button>
                                 <button
                                     className="contact-delete"
                                     onClick={() => handleDelete(contact)}
+                                    title="Delete"
                                 >
-                                    Delete
+                                    🗑️
                                 </button>
                             </div>
                         </div>

@@ -1,57 +1,263 @@
+/* ===== Page layout ===== */
 .sos-page {
     min-height: 100vh;
-    background-color: var(--bg-color);
-    color: var(--text-main);
+    background: #0f172a;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 20px 14px 60px;
+}
+
+.sos-card {
+    width: 100%;
+    max-width: 460px;
+    padding: 20px 16px;
     text-align: center;
 }
 
-.sos-page h1 {
-    font-size: 24px;
+.sos-back {
+    display: inline-block;
+    color: #a78bfa;
+    font-weight: 600;
+    text-decoration: none;
+    margin-bottom: 14px;
+    font-size: 14px;
+}
+
+.sos-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #f9fafb;
+    margin: 6px 0 14px;
+}
+
+.sos-status {
+    color: #9ca3af;
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+.sos-section-title {
+    color: #f9fafb;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 24px 0 12px;
+}
+
+/* ===== Status badges ===== */
+.sos-badge {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 4px 4px;
+}
+
+.sos-badge-ok {
+    background: rgba(22, 163, 74, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.sos-badge-warn {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.sos-map-link {
+    color: #60a5fa;
+    text-decoration: underline;
+    margin-left: 4px;
+}
+
+/* ===== Emergency Call 112 button ===== */
+.sos-call-112 {
+    display: block;
+    width: 100%;
+    max-width: 380px;
+    margin: 18px auto;
+    padding: 18px 20px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.45);
+    border: 2px solid #fca5a5;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    animation: sos-pulse 1.8s ease-in-out infinite;
+}
+
+.sos-call-112:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(220, 38, 38, 0.6);
+}
+
+.sos-call-112:active {
+    transform: translateY(1px);
+}
+
+@keyframes sos-pulse {
+    0%, 100% {
+        box-shadow: 0 6px 20px rgba(220, 38, 38, 0.45),
+        0 0 0 0 rgba(220, 38, 38, 0.6);
+    }
+    50% {
+        box-shadow: 0 6px 20px rgba(220, 38, 38, 0.45),
+        0 0 0 12px rgba(220, 38, 38, 0);
+    }
+}
+
+/* ===== Big alert buttons ===== */
+.sos-alert-all,
+.sos-sms-all {
+    display: block;
+    width: 100%;
+    max-width: 380px;
+    margin: 10px auto;
+    padding: 16px 20px;
+    border: none;
+    border-radius: 14px;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sos-alert-all {
+    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+}
+
+.sos-sms-all {
+    background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4);
+}
+
+.sos-alert-all:hover,
+.sos-sms-all:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.sos-alert-all:active,
+.sos-sms-all:active {
+    transform: translateY(1px);
+}
+
+.sos-note {
+    color: #6b7280;
+    font-size: 12px;
+    margin: 8px auto 16px;
+    max-width: 380px;
+    line-height: 1.5;
+}
+
+.sos-empty {
+    color: #9ca3af;
+    font-size: 14px;
+    margin: 20px 0;
+}
+
+.sos-empty a {
+    color: #a78bfa;
+    font-weight: 700;
+}
+
+/* ===== Contact cards ===== */
+.sos-contact-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 14px;
+    margin: 12px auto;
+    max-width: 420px;
+}
+
+.sos-contact-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #f3f4f6;
+    margin-bottom: 2px;
+    text-align: center;
+}
+
+.sos-contact-meta {
+    font-size: 13px;
+    color: #9ca3af;
+    text-align: center;
     margin-bottom: 10px;
 }
 
-.sos-page p {
-    color: var(--text-muted);
-    margin-bottom: 30px;
+.sos-contact-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
 }
 
-.sos-circle {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #ef4444, #b91c1c);
-    color: white;
-    border: 8px solid rgba(220, 38, 38, 0.2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 10px 30px rgba(220, 38, 38, 0.5);
-    font-size: 40px;
-    font-weight: 900;
-    animation: pulse 1.5s infinite;
-    margin-bottom: 30px;
-}
-
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
-    70% { box-shadow: 0 0 0 30px rgba(220, 38, 38, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
-}
-
-.sos-cancel {
-    background: var(--card-bg);
-    color: var(--text-main);
-    border: 2px solid var(--border-color);
-    padding: 12px 30px;
+.sos-action-whatsapp,
+.sos-action-sms,
+.sos-action-call {
+    padding: 12px 8px;
     border-radius: 12px;
-    font-size: 16px;
-    font-weight: bold;
+    text-align: center;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
     cursor: pointer;
+    transition: transform 0.1s ease, filter 0.15s ease;
+}
+
+.sos-action-whatsapp {
+    background: linear-gradient(135deg, #25d366 0%, #16a34a 100%);
+}
+
+.sos-action-sms {
+    background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+}
+
+.sos-action-call {
+    background: linear-gradient(135deg, #4b5563 0%, #1f2937 100%);
+}
+
+.sos-action-whatsapp:hover,
+.sos-action-sms:hover,
+.sos-action-call:hover {
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+}
+
+.sos-action-whatsapp:active,
+.sos-action-sms:active,
+.sos-action-call:active {
+    transform: translateY(1px);
+}
+
+/* ===== "I'm safe now" button ===== */
+.sos-safe {
+    display: block;
+    width: 100%;
+    max-width: 380px;
+    margin: 24px auto 0;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    background: transparent;
+    color: #e5e7eb;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.sos-safe:hover {
+    background: rgba(255, 255, 255, 0.05);
 }
