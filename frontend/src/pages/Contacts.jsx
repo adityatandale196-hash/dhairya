@@ -28,10 +28,7 @@ function Contacts() {
 
     async function loadContacts() {
         try {
-            const { ok, data } = await apiRequest(
-                "GET",
-                `/api/contacts?userId=${user.userId}`
-            );
+            const { ok, data } = await apiRequest("GET", "/api/contacts");
             if (ok) {
                 setContacts(data);
             } else {
@@ -54,7 +51,7 @@ function Contacts() {
         setSaving(true);
 
         try {
-            const body = { ...form, userId: user.userId };
+            const body = { ...form };
 
             const { ok, data } = editingId
                 ? await apiRequest("PUT", `/api/contacts/${editingId}`, body)
@@ -100,7 +97,7 @@ function Contacts() {
         try {
             const { ok, data } = await apiRequest(
                 "DELETE",
-                `/api/contacts/${contact.contactId}?userId=${user.userId}`
+                `/api/contacts/${contact.contactId}`
             );
             if (ok) {
                 await loadContacts();
@@ -124,7 +121,6 @@ function Contacts() {
 
             <main className="contacts-body">
 
-                {/* Add / Edit form */}
                 <section className="contacts-card">
                     <h2 className="contacts-card-title">
                         {editingId ? "✏️ Edit Contact" : "➕ Add Contact"}
@@ -208,7 +204,6 @@ function Contacts() {
                     </form>
                 </section>
 
-                {/* Contact list */}
                 <section className="contacts-card">
                     <h2 className="contacts-card-title">
                         👥 Your Trusted Circle ({contacts.length})

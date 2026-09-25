@@ -1,5 +1,6 @@
 package com.dhairya.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -14,8 +15,14 @@ public class User {
 
     private String name;
     private String email;
+
+    @JsonIgnore
     private String password;
+
     private String phone;
+
+    @Column(name = "token", length = 64)
+    private String token;
 
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -34,6 +41,9 @@ public class User {
 
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+
+    public String getToken() { return token; }
+    public void setToken(String token) { this.token = token; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 }

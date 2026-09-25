@@ -4,6 +4,7 @@ import com.dhairya.backend.model.Contact;
 import com.dhairya.backend.model.ContactRequest;
 import com.dhairya.backend.repository.ContactRepository;
 import com.dhairya.backend.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,25 +26,28 @@ public class ContactController {
         this.userRepository = userRepository;
     }
 
-    // VIEW all contacts of one user
+    // VIEW all contacts of the logged-in user
     @GetMapping
-    public List<Contact> list(@RequestParam("userId") Integer userId) {
+    public List<Contact> list(HttpServletRequest httpReq) {
+        Integer userId = (Integer) httpReq.getAttribute("userId");
         return contactRepository.findByUserIdOrderByNameAsc(userId);
     }
 
     // ADD a contact
     @PostMapping
-    public ResponseEntity<Object> add(@RequestBody ContactRequest req) {
+    public ResponseEntity<Object> add(@RequestBody ContactRequest req, HttpServletRequest httpReq) {
+        Integer userId = (Integer) httpReq.getAttribute("userId");
+
         String problem = validate(req);
         if (problem != null) {
             return error(HttpStatus.BAD_REQUEST, problem);
         }
-        if (!userRepository.existsById(req.userId())) {
-            return error(HttpStatus.NOT_FOUND, "User not found");
+        if (userId == null || !userRepository.existsById(userId)) {
+            return error(HttpStatus.UNAUTHORIZED, "Not authenticated");
         }
 
         Contact contact = new Contact();
-        contact.setUserId(req.userId());
+        contact.setUserId(userId);
         contact.setName(req.name().trim());
         contact.setPhone(req.phone().trim());
         contact.setEmail(req.email() == null ? null : req.email().trim());
@@ -56,13 +60,16 @@ public class ContactController {
     // UPDATE a contact
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable("id") Integer id,
-                                         @RequestBody ContactRequest req) {
+                                         @RequestBody ContactRequest req,
+                                         HttpServletRequest httpReq) {
+        Integer userId = (Integer) httpReq.getAttribute("userId");
+
         String problem = validate(req);
         if (problem != null) {
             return error(HttpStatus.BAD_REQUEST, problem);
         }
 
-        Optional<Contact> found = contactRepository.findByContactIdAndUserId(id, req.userId());
+        Optional<Contact> found = contactRepository.findByContactIdAndUserId(id, userId);
         if (found.isEmpty()) {
             return error(HttpStatus.NOT_FOUND, "Contact not found");
         }
@@ -79,7 +86,9 @@ public class ContactController {
     // DELETE a contact
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable("id") Integer id,
-                                         @RequestParam("userId") Integer userId) {
+                                         HttpServletRequest httpReq) {
+        Integer userId = (Integer) httpReq.getAttribute("userId");
+
         Optional<Contact> found = contactRepository.findByContactIdAndUserId(id, userId);
         if (found.isEmpty()) {
             return error(HttpStatus.NOT_FOUND, "Contact not found");
@@ -89,7 +98,6 @@ public class ContactController {
     }
 
     private String validate(ContactRequest req) {
-        if (req.userId() == null) return "User id is required";
         if (req.name() == null || req.name().isBlank()) return "Name is required";
         if (req.phone() == null || req.phone().isBlank()) return "Phone is required";
         String digits = req.phone().replaceAll("\\D", "");
@@ -101,7 +109,6 @@ public class ContactController {
     }
 
     private ResponseEntity<Object> error(HttpStatus status, String message) {
-        return ResponseEntity.status(status)
-                .body(Map.of("success", false, "message", message));
+        return ResponseEntity.status(status).body(Map.of("success", false, "message", message));
     }
 }

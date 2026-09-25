@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import { clearToken } from "../services/api";
 import "../App.css";
 import dhairyaLogo from "../assets/logo.png";
 
@@ -25,16 +26,15 @@ function Home() {
     }
 
     function handleLogout() {
-        localStorage.removeItem("dhairyaUser");
+        clearToken();
         navigate("/login");
     }
 
     function handleSosTap() {
-        if (confirming) return; // already confirming
+        if (confirming) return;
         setConfirming(true);
         setHoldProgress(0);
 
-        // Animate progress bar from 0 to 100 over 5 seconds
         const start = Date.now();
         const duration = 5000;
         const interval = setInterval(() => {
@@ -43,14 +43,12 @@ function Home() {
             setHoldProgress(pct);
             if (pct >= 100) {
                 clearInterval(interval);
-                // 5 seconds up — fire SOS
                 setConfirming(false);
                 setHoldProgress(0);
                 navigate("/sos");
             }
         }, 50);
 
-        // Store interval so we can cancel it
         window.__sosInterval = interval;
     }
 

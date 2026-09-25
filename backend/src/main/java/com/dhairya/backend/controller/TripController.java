@@ -6,7 +6,9 @@ import com.dhairya.backend.repository.ContactRepository;
 import com.dhairya.backend.repository.TripRepository;
 import com.dhairya.backend.repository.UserRepository;
 import com.dhairya.backend.service.EmailService;
+import com.dhairya.backend.service.RateLimiter;
 import com.dhairya.backend.service.SmsService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,26 +26,31 @@ public class TripController {
     private final ContactRepository contactRepository;
     private final SmsService smsService;
     private final EmailService emailService;
+    private final RateLimiter rateLimiter;
 
     public TripController(TripRepository tripRepository,
                           UserRepository userRepository,
                           ContactRepository contactRepository,
                           SmsService smsService,
-                          EmailService emailService) {
+                          EmailService emailService,
+                          RateLimiter rateLimiter) {
         this.tripRepository = tripRepository;
         this.userRepository = userRepository;
         this.contactRepository = contactRepository;
         this.smsService = smsService;
         this.emailService = emailService;
+        this.rateLimiter = rateLimiter;
     }
 
     // Start a new journey
     @PostMapping
-    public ResponseEntity<Object> start(@RequestBody TripRequest req) {
-        if (req.userId() == null) {
-            return error(HttpStatus.BAD_REQUEST, "User id is required");
+    public ResponseEntity<Object> start(@RequestBody TripRequest req, HttpServletRequest httpReq) {
+        Integer userId = (Integer) httpReq.getAttribute("userId");
+
+        if (userId == null) {
+            return error(HttpStatus.UNAUTHORIZED, "Not authenticated");
         }
-        if (!userRepository.existsById(req.userId())) {
+        if (!userRepository.existsById(userId)) {
             return error(HttpStatus.NOT_FOUND, "User not found");
         }
         if (req.destination() == null || req.destination().isBlank()) {
@@ -65,7 +72,7 @@ public class TripController {
         }
 
         Trip trip = new Trip();
-        trip.setUserId(req.userId());
+        trip.setUserId(userId);
         trip.setDestination(req.destination());
         trip.setExpectedMinutes(req.expectedMinutes());
         trip.setLatitude(req.latitude());
@@ -75,23 +82,32 @@ public class TripController {
         return ResponseEntity.status(HttpStatus.CREATED).body(tripRepository.save(trip));
     }
 
-    // List all trips of a user (newest first)
+    // List all trips of the logged-in user
     @GetMapping
-    public List<Trip> list(@RequestParam("userId") Integer userId) {
+    public List<Trip> list(HttpServletRequest httpReq) {
+        Integer userId = (Integer) httpReq.getAttribute("userId");
         return tripRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
     // Mark trip as safe ("I've reached safely")
     @PutMapping("/{id}/safe")
-    public ResponseEntity<Object> markSafe(@PathVariable("id") Integer id,
-                                           @RequestParam("userId") Integer userId) {
+    public ResponseEntity<Object> markSafe(@PathVariable("id") Integer id, HttpServletRequest httpReq) {
+        Integer userId = (Integer) httpReq.getAttribute("userId");
         return updateStatus(id, userId, "SAFE");
     }
 
     // Mark trip as escalated AND send SMS + email to all trusted contacts
     @PutMapping("/{id}/escalate")
-    public ResponseEntity<Object> escalate(@PathVariable("id") Integer id,
-                                           @RequestParam("userId") Integer userId) {
+    public ResponseEntity<Object> escalate(@PathVariable("id") Integer id, HttpServletRequest httpReq) {
+        Integer userId = (Integer) httpReq.getAttribute("userId");
+
+        // Rate limit
+        if (!rateLimiter.allow(userId)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(
+                    Map.of("success", false, "message", "Please wait before escalating again")
+            );
+        }
+
         Optional<Trip> found = tripRepository.findByTripIdAndUserId(id, userId);
         if (found.isEmpty()) {
             return error(HttpStatus.NOT_FOUND, "Trip not found");
@@ -101,7 +117,9 @@ public class TripController {
         trip.setStatus("ESCALATED");
         tripRepository.save(trip);
 
-        // AUTOMATIC SMS + EMAIL
+        System.out.println("ESCALATE triggered: userId=" + userId + " tripId=" + id + " time=" + java.time.LocalDateTime.now());
+
+        // Auto notifications: SMS + Email
         try {
             userRepository.findById(userId).ifPresent(user -> {
                 var contacts = contactRepository.findByUserId(userId);
@@ -127,7 +145,6 @@ public class TripController {
 
                 for (var contact : contacts) {
                     smsService.sendSms(contact.getPhone(), smsBody);
-
                     if (contact.getEmail() != null && !contact.getEmail().isBlank()) {
                         emailService.sendEmail(contact.getEmail(), emailSubject, emailBody);
                     }
@@ -143,8 +160,10 @@ public class TripController {
     // Update location (called periodically from the frontend)
     @PutMapping("/{id}/location")
     public ResponseEntity<Object> updateLocation(@PathVariable("id") Integer id,
-                                                 @RequestParam("userId") Integer userId,
-                                                 @RequestBody TripRequest req) {
+                                                 @RequestBody TripRequest req,
+                                                 HttpServletRequest httpReq) {
+        Integer userId = (Integer) httpReq.getAttribute("userId");
+
         Optional<Trip> found = tripRepository.findByTripIdAndUserId(id, userId);
         if (found.isEmpty()) {
             return error(HttpStatus.NOT_FOUND, "Trip not found");

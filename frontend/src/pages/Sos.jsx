@@ -13,7 +13,7 @@ function Sos() {
     const [contacts, setContacts] = useState([]);
     const [location, setLocation] = useState(null);
     const [alertRecord, setAlertRecord] = useState(null);
-    const [status, setStatus] = useState("working"); // working | ready | error
+    const [status, setStatus] = useState("working");
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
 
@@ -30,14 +30,12 @@ function Sos() {
         setStatus("working");
         setError("");
 
-        // 1. Get location
         const pos = await getLocation();
         setLocation(pos);
 
-        // 2. Save alert
+        // Save SOS alert — userId comes from the auth token now
         try {
             const res = await apiRequest("POST", "/api/alerts/sos", {
-                userId: user.userId,
                 latitude: pos ? pos.latitude : null,
                 longitude: pos ? pos.longitude : null,
             });
@@ -50,19 +48,16 @@ function Sos() {
             setError("Cannot reach the server");
         }
 
-        // 3. Load contacts
+        // Load contacts — userId from token
         try {
-            const res = await apiRequest("GET", "/api/contacts?userId=" + user.userId);
+            const res = await apiRequest("GET", "/api/contacts");
             if (res.ok) setContacts(res.data);
         } catch {
-            // ignore, list stays empty
+            // ignore
         }
 
-        // 4. Build message text
         const mapLink = mapLinkFor(pos);
-        const where = mapLink
-            ? "My location: " + mapLink
-            : "Location unavailable.";
+        const where = mapLink ? "My location: " + mapLink : "Location unavailable.";
         const text =
             "SOS EMERGENCY from Dhairya. " +
             user.name +
@@ -79,7 +74,7 @@ function Sos() {
             try {
                 await apiRequest(
                     "PUT",
-                    "/api/alerts/" + alertRecord.alertId + "/resolve?userId=" + user.userId
+                    "/api/alerts/" + alertRecord.alertId + "/resolve"
                 );
             } catch {
                 // ignore
@@ -95,11 +90,8 @@ function Sos() {
                     title: "SOS Alert from Dhairya",
                     text: message,
                 })
-                .catch(() => {
-                    // user cancelled — ignore
-                });
+                .catch(() => {});
         } else {
-            // Fallback: open WhatsApp for the first contact
             if (contacts.length > 0) {
                 window.open(whatsappLink(contacts[0].phone, message), "_blank");
             }

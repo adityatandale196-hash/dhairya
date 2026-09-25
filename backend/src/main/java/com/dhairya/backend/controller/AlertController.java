@@ -6,7 +6,9 @@ import com.dhairya.backend.repository.AlertRepository;
 import com.dhairya.backend.repository.ContactRepository;
 import com.dhairya.backend.repository.UserRepository;
 import com.dhairya.backend.service.EmailService;
+import com.dhairya.backend.service.RateLimiter;
 import com.dhairya.backend.service.SmsService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,43 +26,62 @@ public class AlertController {
     private final ContactRepository contactRepository;
     private final SmsService smsService;
     private final EmailService emailService;
+    private final RateLimiter rateLimiter;
 
     public AlertController(AlertRepository alertRepository,
                            UserRepository userRepository,
                            ContactRepository contactRepository,
                            SmsService smsService,
-                           EmailService emailService) {
+                           EmailService emailService,
+                           RateLimiter rateLimiter) {
         this.alertRepository = alertRepository;
         this.userRepository = userRepository;
         this.contactRepository = contactRepository;
         this.smsService = smsService;
         this.emailService = emailService;
+        this.rateLimiter = rateLimiter;
     }
 
+    // Create an SOS alert
     @PostMapping("/sos")
-    public ResponseEntity<Object> sos(@RequestBody SosRequest req) {
-        return createAlert("SOS", req);
+    public ResponseEntity<Object> sos(@RequestBody SosRequest req, HttpServletRequest httpReq) {
+        Integer userId = (Integer) httpReq.getAttribute("userId");
+        return createAlert("SOS", userId, req);
     }
 
+    // Start a Smart Safety Check
     @PostMapping("/safety-check")
-    public ResponseEntity<Object> safetyCheck(@RequestBody SosRequest req) {
-        return createAlert("SAFETY_CHECK", req);
+    public ResponseEntity<Object> safetyCheck(@RequestBody SosRequest req, HttpServletRequest httpReq) {
+        Integer userId = (Integer) httpReq.getAttribute("userId");
+        return createAlert("SAFETY_CHECK", userId, req);
     }
 
+    // List alerts of the logged-in user
     @GetMapping
-    public List<Alert> list(@RequestParam("userId") Integer userId) {
+    public List<Alert> list(HttpServletRequest httpReq) {
+        Integer userId = (Integer) httpReq.getAttribute("userId");
         return alertRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
+    // Mark an alert as resolved ("I'm safe now")
     @PutMapping("/{id}/resolve")
-    public ResponseEntity<Object> resolve(@PathVariable("id") Integer id,
-                                          @RequestParam("userId") Integer userId) {
+    public ResponseEntity<Object> resolve(@PathVariable("id") Integer id, HttpServletRequest httpReq) {
+        Integer userId = (Integer) httpReq.getAttribute("userId");
         return updateStatus(id, userId, "RESOLVED");
     }
 
+    // Mark as escalated AND send SMS + email to all trusted contacts
     @PutMapping("/{id}/escalate")
-    public ResponseEntity<Object> escalate(@PathVariable("id") Integer id,
-                                           @RequestParam("userId") Integer userId) {
+    public ResponseEntity<Object> escalate(@PathVariable("id") Integer id, HttpServletRequest httpReq) {
+        Integer userId = (Integer) httpReq.getAttribute("userId");
+
+        // Rate limit check
+        if (!rateLimiter.allow(userId)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(
+                    Map.of("success", false, "message", "Please wait before escalating again")
+            );
+        }
+
         Optional<Alert> found = alertRepository.findByAlertIdAndUserId(id, userId);
         if (found.isEmpty()) {
             return error(HttpStatus.NOT_FOUND, "Alert not found");
@@ -69,6 +90,8 @@ public class AlertController {
         Alert alert = found.get();
         alert.setStatus("ESCALATED");
         alertRepository.save(alert);
+
+        System.out.println("ESCALATE triggered: userId=" + userId + " alertId=" + id + " time=" + java.time.LocalDateTime.now());
 
         // Auto notifications: SMS + Email
         try {
@@ -106,10 +129,13 @@ public class AlertController {
         return ResponseEntity.ok(alert);
     }
 
+    // Update location (called periodically from the frontend)
     @PutMapping("/{id}/location")
     public ResponseEntity<Object> updateLocation(@PathVariable("id") Integer id,
-                                                 @RequestParam("userId") Integer userId,
-                                                 @RequestBody SosRequest req) {
+                                                 @RequestBody SosRequest req,
+                                                 HttpServletRequest httpReq) {
+        Integer userId = (Integer) httpReq.getAttribute("userId");
+
         Optional<Alert> found = alertRepository.findByAlertIdAndUserId(id, userId);
         if (found.isEmpty()) {
             return error(HttpStatus.NOT_FOUND, "Alert not found");
@@ -123,11 +149,11 @@ public class AlertController {
         return ResponseEntity.ok(alertRepository.save(alert));
     }
 
-    private ResponseEntity<Object> createAlert(String type, SosRequest req) {
-        if (req.userId() == null) {
-            return error(HttpStatus.BAD_REQUEST, "User id is required");
+    private ResponseEntity<Object> createAlert(String type, Integer userId, SosRequest req) {
+        if (userId == null) {
+            return error(HttpStatus.UNAUTHORIZED, "Not authenticated");
         }
-        if (!userRepository.existsById(req.userId())) {
+        if (!userRepository.existsById(userId)) {
             return error(HttpStatus.NOT_FOUND, "User not found");
         }
 
@@ -143,7 +169,7 @@ public class AlertController {
         }
 
         Alert alert = new Alert();
-        alert.setUserId(req.userId());
+        alert.setUserId(userId);
         alert.setAlertType(type);
         alert.setLatitude(req.latitude());
         alert.setLongitude(req.longitude());

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { postJson } from "../services/api";
+import { postJson, setToken } from "../services/api";
 import dhairyaLogo from "../assets/logo.png";
 import "./Auth.css";
 
@@ -26,8 +26,9 @@ function Login() {
         try {
             const { ok, data } = await postJson("/api/users/login", form);
 
-            if (ok) {
+            if (ok && data.token) {
                 localStorage.setItem("dhairyaUser", JSON.stringify(data.user));
+                setToken(data.token);
                 navigate("/");
             } else {
                 setError(data.message || "Login failed");

@@ -4,6 +4,5 @@ public record ContactRequest(
         String name,
         String phone,
         String email,
-        String relationship,
-        Integer userId
+        String relationship
 ) {}
