@@ -1,12 +1,12 @@
+import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import "../App.css";
 import dhairyaLogo from "../assets/logo.png";
-import ThemeToggle from "../components/ThemeToggle"; // Import the new component
 
 const features = [
     { icon: "🛡️", title: "Safety Check", text: "Check your safety", path: "/safety-check" },
     { icon: "🚗", title: "Safe Travel", text: "Track your journey", path: "/safe-travel" },
-    { icon: "📍", title: "Live Location", text: "Share your location", path:"/live-location"},
+    { icon: "📍", title: "Live Location", text: "Share your location", path: null },
     { icon: "👥", title: "Trusted Circle", text: "Your trusted people", path: "/contacts" },
     { icon: "📞", title: "Fake Call", text: "Get a simulated call", path: "/fake-call" },
     { icon: "🔊", title: "Emergency Siren", text: "Activate siren", path: "/siren" },
@@ -14,6 +14,8 @@ const features = [
 
 function Home() {
     const navigate = useNavigate();
+    const [confirming, setConfirming] = useState(false);
+    const [holdProgress, setHoldProgress] = useState(0);
 
     const stored = localStorage.getItem("dhairyaUser");
     const user = stored ? JSON.parse(stored) : null;
@@ -27,8 +29,44 @@ function Home() {
         navigate("/login");
     }
 
+    function handleSosTap() {
+        if (confirming) return; // already confirming
+        setConfirming(true);
+        setHoldProgress(0);
+
+        // Animate progress bar from 0 to 100 over 5 seconds
+        const start = Date.now();
+        const duration = 5000;
+        const interval = setInterval(() => {
+            const elapsed = Date.now() - start;
+            const pct = Math.min(100, (elapsed / duration) * 100);
+            setHoldProgress(pct);
+            if (pct >= 100) {
+                clearInterval(interval);
+                // 5 seconds up — fire SOS
+                setConfirming(false);
+                setHoldProgress(0);
+                navigate("/sos");
+            }
+        }, 50);
+
+        // Store interval so we can cancel it
+        window.__sosInterval = interval;
+    }
+
+    function handleSosCancel() {
+        if (window.__sosInterval) {
+            clearInterval(window.__sosInterval);
+            window.__sosInterval = null;
+        }
+        setConfirming(false);
+        setHoldProgress(0);
+    }
+
     return (
         <div className="app">
+
+            {/* Header */}
             <header className="top-bar">
                 <div className="brand">
                     <img src={dhairyaLogo} alt="Dhairya Logo" className="brand-logo" />
@@ -37,33 +75,61 @@ function Home() {
                         <p>Hi, {user.name}</p>
                     </div>
                 </div>
-
-                {/* Toggle and Logout buttons */}
-                <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                    <ThemeToggle />
-                    <button className="logout-btn" onClick={handleLogout}>Logout</button>
-                </div>
+                <button className="logout-btn" onClick={handleLogout}>Logout</button>
             </header>
 
+            {/* Main Content */}
             <main className="home-container">
+
                 <section className="welcome-card">
                     <img src={dhairyaLogo} alt="Dhairya Logo" className="welcome-logo" />
                     <p className="small-text">Welcome to Dhairya</p>
-                    <h2>Stay Safe.<br />Stay Connected.</h2>
-                    <p className="welcome-description">Smart safety support for emergencies and travel.</p>
+                    <h2>
+                        Stay Safe.
+                        <br />
+                        Stay Connected.
+                    </h2>
+                    <p className="welcome-description">
+                        Smart safety support for emergencies and travel.
+                    </p>
                 </section>
 
+                {/* SOS Button */}
                 <section className="sos-section">
-                    <button className="sos-button" onClick={() => navigate("/sos")}>
-                        <span className="sos-icon">!</span>
-                        <span>SOS</span>
-                        <small>Emergency</small>
-                    </button>
+                    {!confirming && (
+                        <button className="sos-button" onClick={handleSosTap}>
+                            <span className="sos-icon">!</span>
+                            <span>SOS</span>
+                            <small>Emergency</small>
+                        </button>
+                    )}
+
+                    {confirming && (
+                        <div className="sos-confirm-box">
+                            <p className="sos-confirm-text">
+                                ⚠️ Sending SOS in 5 seconds
+                            </p>
+                            <div className="sos-progress-bar">
+                                <div
+                                    className="sos-progress-fill"
+                                    style={{ width: `${holdProgress}%` }}
+                                />
+                            </div>
+                            <button className="sos-cancel-btn" onClick={handleSosCancel}>
+                                Cancel
+                            </button>
+                        </div>
+                    )}
                 </section>
 
+                {/* Features */}
                 <section className="feature-grid">
                     {features.map((f) => (
-                        <button className="feature-card" key={f.title} onClick={() => f.path && navigate(f.path)}>
+                        <button
+                            className="feature-card"
+                            key={f.title}
+                            onClick={() => f.path && navigate(f.path)}
+                        >
                             <div className="feature-icon">{f.icon}</div>
                             <h3>{f.title}</h3>
                             <p>{f.text}</p>
@@ -72,13 +138,33 @@ function Home() {
                 </section>
             </main>
 
+            {/* Bottom Navigation */}
             <nav className="bottom-nav">
-                <button onClick={() => navigate("/")}><span>⌂</span><small>Home</small></button>
-                <button onClick={() => navigate("/live-location")}><span>📍</span><small>Location</small></button>
-                <button className="nav-sos" onClick={() => navigate("/sos")}><span>!</span></button>
-                <button onClick={() => navigate("/contacts")}><span>👥</span><small>Contacts</small></button>
-                <button onClick={() => navigate("/about")}><span>⚙️</span><small>About</small></button>
+                <button onClick={() => navigate("/")}>
+                    <span>⌂</span>
+                    <small>Home</small>
+                </button>
+
+                <button>
+                    <span>📍</span>
+                    <small>Location</small>
+                </button>
+
+                <button className="nav-sos" onClick={handleSosTap}>
+                    <span>!</span>
+                </button>
+
+                <button onClick={() => navigate("/contacts")}>
+                    <span>👥</span>
+                    <small>Contacts</small>
+                </button>
+
+                <button>
+                    <span>⚙️</span>
+                    <small>Settings</small>
+                </button>
             </nav>
+
         </div>
     );
 }

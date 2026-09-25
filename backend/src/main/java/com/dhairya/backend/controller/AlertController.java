@@ -5,6 +5,7 @@ import com.dhairya.backend.model.SosRequest;
 import com.dhairya.backend.repository.AlertRepository;
 import com.dhairya.backend.repository.ContactRepository;
 import com.dhairya.backend.repository.UserRepository;
+import com.dhairya.backend.service.EmailService;
 import com.dhairya.backend.service.SmsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,43 +23,41 @@ public class AlertController {
     private final UserRepository userRepository;
     private final ContactRepository contactRepository;
     private final SmsService smsService;
+    private final EmailService emailService;
 
     public AlertController(AlertRepository alertRepository,
                            UserRepository userRepository,
                            ContactRepository contactRepository,
-                           SmsService smsService) {
+                           SmsService smsService,
+                           EmailService emailService) {
         this.alertRepository = alertRepository;
         this.userRepository = userRepository;
         this.contactRepository = contactRepository;
         this.smsService = smsService;
+        this.emailService = emailService;
     }
 
-    // Create an SOS alert
     @PostMapping("/sos")
     public ResponseEntity<Object> sos(@RequestBody SosRequest req) {
         return createAlert("SOS", req);
     }
 
-    // Start a Smart Safety Check
     @PostMapping("/safety-check")
     public ResponseEntity<Object> safetyCheck(@RequestBody SosRequest req) {
         return createAlert("SAFETY_CHECK", req);
     }
 
-    // List alerts of one user (newest first)
     @GetMapping
     public List<Alert> list(@RequestParam("userId") Integer userId) {
         return alertRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
-    // Mark an alert as resolved ("I'm safe now")
     @PutMapping("/{id}/resolve")
     public ResponseEntity<Object> resolve(@PathVariable("id") Integer id,
                                           @RequestParam("userId") Integer userId) {
         return updateStatus(id, userId, "RESOLVED");
     }
 
-    // Mark an alert as escalated AND send automatic SMS to all trusted contacts
     @PutMapping("/{id}/escalate")
     public ResponseEntity<Object> escalate(@PathVariable("id") Integer id,
                                            @RequestParam("userId") Integer userId) {
@@ -71,44 +70,42 @@ public class AlertController {
         alert.setStatus("ESCALATED");
         alertRepository.save(alert);
 
+        // Auto notifications: SMS + Email
         try {
             userRepository.findById(userId).ifPresent(user -> {
                 var contacts = contactRepository.findByUserId(userId);
 
-                StringBuilder message = new StringBuilder();
-                message.append(user.getName())
-                        .append(" triggered a safety alert.");
+                String mapsLink = "";
                 if (alert.getLatitude() != null && alert.getLongitude() != null) {
-                    message.append(" Location: Latitude ")
-                            .append(alert.getLatitude())
-                            .append(", Longitude ")
-                            .append(alert.getLongitude());
+                    mapsLink = "Location: https://maps.google.com/?q="
+                            + alert.getLatitude() + "," + alert.getLongitude();
                 }
-                message.append(" Call now.");
 
-                String smsBody = message.toString();
-                boolean first = true;
+                String smsBody = "EMERGENCY ALERT from Dhairya: " + user.getName()
+                        + " has triggered a safety alert. " + mapsLink
+                        + " Please call them immediately.";
+
+                String emailSubject = "Emergency Alert from " + user.getName();
+                String emailBody = "Dear contact,\n\n"
+                        + user.getName() + " has triggered an emergency alert on Dhairya.\n\n"
+                        + mapsLink + "\n\n"
+                        + "Please call them immediately.\n\n"
+                        + "- Dhairya Safety App";
+
                 for (var contact : contacts) {
-                    if (!first) {
-                        try {
-                            Thread.sleep(10000);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            break;
-                        }
-                    }
-                    first = false;
                     smsService.sendSms(contact.getPhone(), smsBody);
+                    if (contact.getEmail() != null && !contact.getEmail().isBlank()) {
+                        emailService.sendEmail(contact.getEmail(), emailSubject, emailBody);
+                    }
                 }
             });
         } catch (Exception e) {
-            System.err.println("Auto SMS failed: " + e.getMessage());
+            System.err.println("Auto notify failed: " + e.getMessage());
         }
 
         return ResponseEntity.ok(alert);
     }
 
-    // Update location (called periodically from the frontend)
     @PutMapping("/{id}/location")
     public ResponseEntity<Object> updateLocation(@PathVariable("id") Integer id,
                                                  @RequestParam("userId") Integer userId,

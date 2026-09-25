@@ -1,35 +1,50 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Contacts from "./pages/Contacts";
-import Sos from "./pages/Sos";
-import FakeCall from "./pages/FakeCall";
-import Siren from "./pages/Siren";
-import SafetyCheck from "./pages/SafetyCheck";
-import LiveLocation from "./pages/LiveLocation";
-import SafeTravel from "./pages/SafeTravel";
-import About from "./pages/About";
-
-function App() {
-    return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/contacts" element={<Contacts />} />
-                <Route path="/sos" element={<Sos />} />
-                <Route path="/fake-call" element={<FakeCall />} />
-                <Route path="/siren" element={<Siren />} />
-                <Route path="/safety-check" element={<SafetyCheck />} />
-                <Route path="/live-location" element={<LiveLocation />} />
-                <Route path="/safe-travel" element={<SafeTravel />} />
-                <Route path="/about" element={<About />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-        </BrowserRouter>
-    );
+/* ===== SOS confirmation box ===== */
+.sos-confirm-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    background: #fef2f2;
+    border: 2px solid #dc2626;
+    border-radius: 20px;
+    margin: 12px auto;
+    max-width: 320px;
 }
 
-export default App;
+.sos-confirm-text {
+    font-size: 15px;
+    font-weight: 700;
+    color: #991b1b;
+    margin: 0;
+    text-align: center;
+}
+
+.sos-progress-bar {
+    width: 100%;
+    height: 10px;
+    background: #fecaca;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.sos-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #dc2626 0%, #991b1b 100%);
+    transition: width 0.05s linear;
+}
+
+.sos-cancel-btn {
+    padding: 10px 24px;
+    border: 1px solid #dc2626;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #dc2626;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.sos-cancel-btn:hover {
+    background: #fef2f2;
+}

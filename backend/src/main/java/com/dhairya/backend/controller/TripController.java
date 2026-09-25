@@ -5,6 +5,7 @@ import com.dhairya.backend.model.TripRequest;
 import com.dhairya.backend.repository.ContactRepository;
 import com.dhairya.backend.repository.TripRepository;
 import com.dhairya.backend.repository.UserRepository;
+import com.dhairya.backend.service.EmailService;
 import com.dhairya.backend.service.SmsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,15 +23,18 @@ public class TripController {
     private final UserRepository userRepository;
     private final ContactRepository contactRepository;
     private final SmsService smsService;
+    private final EmailService emailService;
 
     public TripController(TripRepository tripRepository,
                           UserRepository userRepository,
                           ContactRepository contactRepository,
-                          SmsService smsService) {
+                          SmsService smsService,
+                          EmailService emailService) {
         this.tripRepository = tripRepository;
         this.userRepository = userRepository;
         this.contactRepository = contactRepository;
         this.smsService = smsService;
+        this.emailService = emailService;
     }
 
     // Start a new journey
@@ -84,7 +88,7 @@ public class TripController {
         return updateStatus(id, userId, "SAFE");
     }
 
-    // Mark trip as escalated AND send automatic SMS to all trusted contacts
+    // Mark trip as escalated AND send SMS + email to all trusted contacts
     @PutMapping("/{id}/escalate")
     public ResponseEntity<Object> escalate(@PathVariable("id") Integer id,
                                            @RequestParam("userId") Integer userId) {
@@ -97,40 +101,40 @@ public class TripController {
         trip.setStatus("ESCALATED");
         tripRepository.save(trip);
 
+        // AUTOMATIC SMS + EMAIL
         try {
             userRepository.findById(userId).ifPresent(user -> {
                 var contacts = contactRepository.findByUserId(userId);
 
-                StringBuilder message = new StringBuilder();
-                message.append(user.getName())
-                        .append(" not reached ")
-                        .append(trip.getDestination())
-                        .append(".");
+                String mapsLink = "";
                 if (trip.getLatitude() != null && trip.getLongitude() != null) {
-                    message.append(" Last known location: Latitude ")
-                            .append(trip.getLatitude())
-                            .append(", Longitude ")
-                            .append(trip.getLongitude());
+                    mapsLink = "Last known location: https://maps.google.com/?q="
+                            + trip.getLatitude() + "," + trip.getLongitude();
                 }
-                message.append(" Call now.");
 
-                String smsBody = message.toString();
-                boolean first = true;
+                String smsBody = "TRAVEL ALERT from Dhairya: " + user.getName()
+                        + " was travelling to " + trip.getDestination()
+                        + " and has not confirmed reaching safely. "
+                        + mapsLink + " Please call them now.";
+
+                String emailSubject = "Travel Alert from " + user.getName();
+                String emailBody = "Dear contact,\n\n"
+                        + user.getName() + " was travelling to " + trip.getDestination()
+                        + " and has not confirmed reaching safely.\n\n"
+                        + mapsLink + "\n\n"
+                        + "Please call them now.\n\n"
+                        + "- Dhairya Safety App";
+
                 for (var contact : contacts) {
-                    if (!first) {
-                        try {
-                            Thread.sleep(10000);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            break;
-                        }
-                    }
-                    first = false;
                     smsService.sendSms(contact.getPhone(), smsBody);
+
+                    if (contact.getEmail() != null && !contact.getEmail().isBlank()) {
+                        emailService.sendEmail(contact.getEmail(), emailSubject, emailBody);
+                    }
                 }
             });
         } catch (Exception e) {
-            System.err.println("Auto SMS failed: " + e.getMessage());
+            System.err.println("Auto notify failed: " + e.getMessage());
         }
 
         return ResponseEntity.ok(trip);
