@@ -31,6 +31,15 @@ public class EmailService {
             return false;
         }
 
+        // --- DIAGNOSTIC: shows first 10 chars of the key + total length ---
+        String keyPreview = (apiKey == null)
+                ? "NULL"
+                : apiKey.substring(0, Math.min(10, apiKey.length())) + "...(" + apiKey.length() + " chars)";
+        System.out.println("Brevo key being used: " + keyPreview);
+
+        String senderPreview = (senderEmail == null) ? "NULL" : senderEmail;
+        System.out.println("Brevo sender email: " + senderPreview);
+
         try {
             String json = "{"
                     + "\"sender\":{\"name\":\"" + escapeJson(senderName) + "\",\"email\":\"" + escapeJson(senderEmail) + "\"},"
