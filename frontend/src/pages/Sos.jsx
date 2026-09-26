@@ -33,7 +33,7 @@ function Sos() {
         const pos = await getLocation();
         setLocation(pos);
 
-        // Save SOS alert — userId comes from the auth token now
+        // Create SOS alert
         try {
             const res = await apiRequest("POST", "/api/alerts/sos", {
                 latitude: pos ? pos.latitude : null,
@@ -41,6 +41,16 @@ function Sos() {
             });
             if (res.ok) {
                 setAlertRecord(res.data);
+
+                // 🔥 AUTOMATIC ESCALATION — send SMS + email to all contacts
+                // Fire-and-forget: don't await, because the backend takes ~40s
+                // (10s delay between each contact's SMS). The UI moves on immediately.
+                apiRequest(
+                    "PUT",
+                    "/api/alerts/" + res.data.alertId + "/escalate"
+                ).catch(() => {
+                    // ignore — alerts still queued on backend
+                });
             } else {
                 setError(res.data.message || "Could not save alert");
             }
@@ -48,7 +58,7 @@ function Sos() {
             setError("Cannot reach the server");
         }
 
-        // Load contacts — userId from token
+        // Load contacts (for the manual buttons below)
         try {
             const res = await apiRequest("GET", "/api/contacts");
             if (res.ok) setContacts(res.data);
@@ -118,7 +128,9 @@ function Sos() {
                 )}
 
                 {alertRecord && (
-                    <div className="sos-badge sos-badge-ok">✓ Alert saved</div>
+                    <div className="sos-badge sos-badge-ok">
+                        ✓ Alert sent to all trusted contacts
+                    </div>
                 )}
 
                 {location && (
@@ -140,10 +152,10 @@ function Sos() {
                     📞 Call 112 — Emergency
                 </a>
 
-                <h2 className="sos-section-title">Alert your contacts</h2>
+                <h2 className="sos-section-title">Need more help? Reach out directly</h2>
 
                 <button className="sos-alert-all" onClick={openShareMenu}>
-                    🚨 Alert All Contacts (Share Menu)
+                    🚨 Share via WhatsApp
                 </button>
 
                 <button className="sos-sms-all" onClick={smsAll}>
@@ -151,8 +163,8 @@ function Sos() {
                 </button>
 
                 <p className="sos-note">
-                    "Share Menu" opens WhatsApp with multiple contacts. "SMS All" tries to
-                    pre-fill all numbers.
+                    Your contacts were already alerted automatically. Use the buttons
+                    below if you want to reach them personally too.
                 </p>
 
                 {contacts.length === 0 && (
