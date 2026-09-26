@@ -168,7 +168,6 @@ function About() {
                             <span className="about-chip">Spring Boot 3</span>
                             <span className="about-chip">Spring Security</span>
                             <span className="about-chip">JPA / Hibernate</span>
-                            <span className="about-chip">JavaMailSender</span>
                         </div>
                     </div>
 
@@ -182,10 +181,10 @@ function About() {
                     <div className="about-tech-group">
                         <div className="about-tech-group-label">Integrations</div>
                         <div className="about-tech-chips">
-                            <span className="about-chip">CircuitDigest SMS API</span>
-                            <span className="about-chip">Gmail SMTP</span>
-                            <span className="about-chip">Google Maps Links</span>
-                            <span className="about-chip">Web Geolocation</span>
+                            <span className="about-chip">CircuitDigest SMS</span>
+                            <span className="about-chip">Brevo Email</span>
+                            <span className="about-chip">Google Maps</span>
+                            <span className="about-chip">Geolocation API</span>
                         </div>
                     </div>
 
@@ -206,33 +205,54 @@ function About() {
 
                     <div className="about-team-member">
                         <div className="about-team-avatar">AT</div>
-                        <div>
-                            <div className="about-team-name">Aditya Tandale</div>
-                            <div className="about-team-role">Full Stack Development</div>
+                        <div className="about-team-info">
+                            <p className="about-team-name">Aditya Tandale</p>
+
                         </div>
                     </div>
 
                     <div className="about-team-member">
                         <div className="about-team-avatar">AS</div>
-                        <div>
-                            <div className="about-team-name">Ayush Shinde</div>
-                            <div className="about-team-role">Backend & Database</div>
+                        <div className="about-team-info">
+                            <p className="about-team-name">Ayush Shinde</p>
+
                         </div>
                     </div>
 
                     <div className="about-team-member">
                         <div className="about-team-avatar">DS</div>
-                        <div>
-                            <div className="about-team-name">Dnyaneshwar Shingate</div>
-                            <div className="about-team-role">Frontend & UI</div>
+                        <div className="about-team-info">
+                            <p className="about-team-name">Dnyaneshwar Shingate</p>
+
                         </div>
                     </div>
 
                     <div className="about-team-member">
                         <div className="about-team-avatar">RS</div>
-                        <div>
-                            <div className="about-team-name">Rahul Sumbe</div>
-                            <div className="about-team-role">Testing & Documentation</div>
+                        <div className="about-team-info">
+                            <p className="about-team-name">Rahul Sumbe</p>
+
+                        </div>
+                    </div>
+                </section>
+
+                {/* Guided By */}
+                <section className="about-section">
+                    <h2 className="about-section-title">🎓 Guided By</h2>
+
+                    <div className="about-guide-member">
+                        <div className="about-guide-avatar">JW</div>
+                        <div className="about-guide-info">
+                            <p className="about-guide-name">Prof. J. C. Wagh</p>
+                            <p className="about-guide-role">Project Guide</p>
+                        </div>
+                    </div>
+
+                    <div className="about-guide-member">
+                        <div className="about-guide-avatar">HC</div>
+                        <div className="about-guide-info">
+                            <p className="about-guide-name">Prof. H. A. Chavan</p>
+                            <p className="about-guide-role">Project Guide</p>
                         </div>
                     </div>
                 </section>
@@ -290,6 +310,8 @@ function About() {
                 </section>
 
                 <div className="about-footer">
+                    Made with ❤️ for Women's Safety
+                    <br />
                     Dhairya © 2026 · Mumbai University
                     <br />
                     Full Stack Java Mini Project

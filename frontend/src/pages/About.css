@@ -1,13 +1,14 @@
 /* ==========================================================
-   About page
+   About page — theme-aware
    ========================================================== */
 .about-page {
     min-height: 100vh;
     background: var(--bg);
+    color: var(--text);
     display: flex;
     justify-content: center;
     padding: 20px 14px 60px;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .about-body {
@@ -119,6 +120,15 @@
     word-break: break-word;
 }
 
+.about-link {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.about-link:hover {
+    text-decoration: underline;
+}
+
 /* Body text */
 .about-text {
     color: var(--text-muted);
@@ -193,12 +203,14 @@
     border: 1px solid var(--primary-soft);
 }
 
-/* Team */
+/* ==========================================================
+   Team
+   ========================================================== */
 .about-team-member {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 0;
+    gap: 14px;
+    padding: 14px 0;
     border-bottom: 1px solid var(--border);
 }
 
@@ -207,31 +219,98 @@
 }
 
 .about-team-avatar {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--primary-2) 0%, var(--primary) 100%);
     color: #ffffff;
     font-weight: 800;
-    font-size: 15px;
+    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     letter-spacing: 0.5px;
-    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35);
 }
 
-.about-team-name {
-    font-size: 14px;
+.about-team-info {
+    flex: 1;
+    min-width: 0;
+}
+
+p.about-team-name {
+    display: block;
+    font-size: 15px;
     font-weight: 700;
     color: var(--text);
-    margin-bottom: 2px;
+    margin: 0 0 3px;
+    line-height: 1.2;
 }
 
-.about-team-role {
+p.about-team-role {
+    display: block;
     font-size: 12px;
-    color: var(--text-muted);
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.3px;
+    margin: 0;
+    line-height: 1.2;
+}
+
+/* ==========================================================
+   Guided By
+   ========================================================== */
+.about-guide-member {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.about-guide-member:last-child {
+    border-bottom: none;
+}
+
+.about-guide-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+}
+
+.about-guide-info {
+    flex: 1;
+    min-width: 0;
+}
+
+p.about-guide-name {
+    display: block;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 3px;
+    line-height: 1.2;
+}
+
+p.about-guide-role {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--warning);
+    letter-spacing: 0.3px;
+    margin: 0;
+    line-height: 1.2;
 }
 
 /* Emergency button */
@@ -291,7 +370,7 @@
     text-align: center;
     font-size: 12px;
     color: var(--text-muted);
-    line-height: 1.6;
+    line-height: 1.7;
     margin-top: 24px;
     padding-top: 20px;
     border-top: 1px solid var(--border);
