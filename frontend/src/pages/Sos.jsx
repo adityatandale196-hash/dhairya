@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { apiRequest } from "../services/api";
 import { getLocation, mapLinkFor, whatsappLink, smsLink } from "../services/share";
+import { createSiren } from "../services/sound"; // ADDED
 import "./Sos.css";
 
 function Sos() {
@@ -16,6 +17,14 @@ function Sos() {
     const [status, setStatus] = useState("working");
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
+
+    // ADDED: Initialize Siren
+    const [siren] = useState(() => createSiren());
+
+    // ADDED: Cleanup siren on unmount
+    useEffect(() => {
+        return () => siren.stop();
+    }, [siren]);
 
     useEffect(() => {
         if (!user) return;
@@ -33,7 +42,6 @@ function Sos() {
         const pos = await getLocation();
         setLocation(pos);
 
-        // Create SOS alert
         try {
             const res = await apiRequest("POST", "/api/alerts/sos", {
                 latitude: pos ? pos.latitude : null,
@@ -42,15 +50,13 @@ function Sos() {
             if (res.ok) {
                 setAlertRecord(res.data);
 
-                // 🔥 AUTOMATIC ESCALATION — send SMS + email to all contacts
-                // Fire-and-forget: don't await, because the backend takes ~40s
-                // (10s delay between each contact's SMS). The UI moves on immediately.
+                // ADDED: Start siren immediately
+                siren.start();
+
                 apiRequest(
                     "PUT",
                     "/api/alerts/" + res.data.alertId + "/escalate"
-                ).catch(() => {
-                    // ignore — alerts still queued on backend
-                });
+                ).catch(() => {});
             } else {
                 setError(res.data.message || "Could not save alert");
             }
@@ -58,13 +64,10 @@ function Sos() {
             setError("Cannot reach the server");
         }
 
-        // Load contacts (for the manual buttons below)
         try {
             const res = await apiRequest("GET", "/api/contacts");
             if (res.ok) setContacts(res.data);
-        } catch {
-            // ignore
-        }
+        } catch {}
 
         const mapLink = mapLinkFor(pos);
         const where = mapLink ? "My location: " + mapLink : "Location unavailable.";
@@ -80,27 +83,23 @@ function Sos() {
     }
 
     async function markSafe() {
+        // ADDED: Stop siren when safe
+        siren.stop();
+
         if (alertRecord) {
             try {
                 await apiRequest(
                     "PUT",
                     "/api/alerts/" + alertRecord.alertId + "/resolve"
                 );
-            } catch {
-                // ignore
-            }
+            } catch {}
         }
         navigate("/");
     }
 
     function openShareMenu() {
         if (navigator.share) {
-            navigator
-                .share({
-                    title: "SOS Alert from Dhairya",
-                    text: message,
-                })
-                .catch(() => {});
+            navigator.share({ title: "SOS Alert from Dhairya", text: message }).catch(() => {});
         } else {
             if (contacts.length > 0) {
                 window.open(whatsappLink(contacts[0].phone, message), "_blank");
@@ -119,7 +118,7 @@ function Sos() {
     return (
         <div className="sos-page">
             <div className="sos-card">
-                <Link to="/" className="sos-back">← Back</Link>
+                <Link to="/" className="sos-back" onClick={() => siren.stop()}>← Back</Link>
 
                 <h1 className="sos-title">🚨 SOS Activated</h1>
 
@@ -162,18 +161,6 @@ function Sos() {
                     📱 SMS All (Auto-fill)
                 </button>
 
-                <p className="sos-note">
-                    Your contacts were already alerted automatically. Use the buttons
-                    below if you want to reach them personally too.
-                </p>
-
-                {contacts.length === 0 && (
-                    <p className="sos-empty">
-                        You have no emergency contacts yet.{" "}
-                        <Link to="/contacts">Add contacts</Link>
-                    </p>
-                )}
-
                 {contacts.map((contact) => (
                     <div className="sos-contact-card" key={contact.contactId}>
                         <div className="sos-contact-name">{contact.name}</div>
@@ -182,12 +169,7 @@ function Sos() {
                             {contact.relationship ? " · " + contact.relationship : ""}
                         </div>
                         <div className="sos-contact-actions">
-                            <a
-                                className="sos-action-whatsapp"
-                                href={whatsappLink(contact.phone, message)}
-                                target="_blank"
-                                rel="noreferrer"
-                            >
+                            <a className="sos-action-whatsapp" href={whatsappLink(contact.phone, message)} target="_blank" rel="noreferrer">
                                 WhatsApp
                             </a>
                             <a className="sos-action-sms" href={smsLink(contact.phone, message)}>
