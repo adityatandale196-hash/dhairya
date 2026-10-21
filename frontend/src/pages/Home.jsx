@@ -65,8 +65,6 @@ function Home() {
 
     return (
         <div className="app">
-
-            {/* Header */}
             <header className="top-bar">
                 <div className="brand">
                     <img src={dhairyaLogo} alt="Dhairya Logo" className="brand-logo" />
@@ -89,9 +87,7 @@ function Home() {
                 </div>
             </header>
 
-            {/* Main Content */}
             <main className="home-container">
-
                 <section className="welcome-card">
                     <img src={dhairyaLogo} alt="Dhairya Logo" className="welcome-logo" />
                     <p className="small-text">Welcome to Dhairya</p>
@@ -100,12 +96,12 @@ function Home() {
                         <br />
                         Stay Connected.
                     </h2>
+                    {/* Changed from "Smart safety support..." */}
                     <p className="welcome-description">
-                        Smart safety support for emergencies and travel.
+                        Reliable safety support for emergencies and travel.
                     </p>
                 </section>
 
-                {/* SOS Button */}
                 <section className="sos-section">
                     {!confirming && (
                         <button className="sos-button" onClick={handleSosTap}>
@@ -133,7 +129,6 @@ function Home() {
                     )}
                 </section>
 
-                {/* Features */}
                 <section className="feature-grid">
                     {features.map((f) => (
                         <button
@@ -149,7 +144,6 @@ function Home() {
                 </section>
             </main>
 
-            {/* Bottom Navigation — using Link for reliable navigation */}
             <nav className="bottom-nav">
                 <Link to="/" className="bottom-nav-item">
                     <span>⌂</span>
@@ -175,7 +169,6 @@ function Home() {
                     <small>Settings</small>
                 </Link>
             </nav>
-
         </div>
     );
 }

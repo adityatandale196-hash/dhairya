@@ -11,7 +11,7 @@ export default defineConfig({
       manifest: {
         name: 'Dhairya - Your Safety App',
         short_name: 'Dhairya',
-        description: "Smart Women's Safety and Travel Companion",
+        description: "Women's Safety and Travel Companion",
         theme_color: '#7c3aed',
         background_color: '#f5f7fb',
         display: 'standalone',

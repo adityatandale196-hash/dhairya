@@ -31,7 +31,7 @@ function About() {
                     <h1 className="about-title">Dhairya</h1>
                     <p className="about-tagline">Your Safety, Our Priority</p>
                     <p className="about-hero-sub">
-                        Smart Women's Safety & Travel Companion
+                         Women's Safety & Travel Companion
                     </p>
                 </div>
 
@@ -75,7 +75,7 @@ function About() {
                     <p className="about-text">
                         Dhairya is a personal safety app designed for women to stay
                         connected with their trusted circle during emergencies and
-                        travel. It combines instant SOS alerts, smart safety checks,
+                        travel. It combines instant SOS alerts, safety checks,
                         safe travel tracking, live location sharing, and emergency
                         tools into one simple experience.
                     </p>
@@ -88,7 +88,7 @@ function About() {
                     <div className="about-feature">
                         <span className="about-feature-icon">🛡️</span>
                         <div>
-                            <div className="about-feature-title">Smart Safety Check</div>
+                            <div className="about-feature-title"> Safety Check</div>
                             <div className="about-feature-text">
                                 Periodic check-ins with automatic escalation to contacts
                             </div>
