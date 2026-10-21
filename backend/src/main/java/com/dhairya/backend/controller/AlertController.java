@@ -42,40 +42,34 @@ public class AlertController {
         this.rateLimiter = rateLimiter;
     }
 
-    // Create an SOS alert
     @PostMapping("/sos")
     public ResponseEntity<Object> sos(@RequestBody SosRequest req, HttpServletRequest httpReq) {
         Integer userId = (Integer) httpReq.getAttribute("userId");
         return createAlert("SOS", userId, req);
     }
 
-    // Start a Smart Safety Check
     @PostMapping("/safety-check")
     public ResponseEntity<Object> safetyCheck(@RequestBody SosRequest req, HttpServletRequest httpReq) {
         Integer userId = (Integer) httpReq.getAttribute("userId");
         return createAlert("SAFETY_CHECK", userId, req);
     }
 
-    // List alerts of the logged-in user
     @GetMapping
     public List<Alert> list(HttpServletRequest httpReq) {
         Integer userId = (Integer) httpReq.getAttribute("userId");
         return alertRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
-    // Mark an alert as resolved ("I'm safe now")
     @PutMapping("/{id}/resolve")
     public ResponseEntity<Object> resolve(@PathVariable("id") Integer id, HttpServletRequest httpReq) {
         Integer userId = (Integer) httpReq.getAttribute("userId");
         return updateStatus(id, userId, "RESOLVED");
     }
 
-    // Mark as escalated AND send SMS + email to all trusted contacts
     @PutMapping("/{id}/escalate")
     public ResponseEntity<Object> escalate(@PathVariable("id") Integer id, HttpServletRequest httpReq) {
         Integer userId = (Integer) httpReq.getAttribute("userId");
 
-        // Rate limit check
         if (!rateLimiter.allow(userId)) {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(
                     Map.of("success", false, "message", "Please wait before escalating again")
@@ -91,22 +85,19 @@ public class AlertController {
         alert.setStatus("ESCALATED");
         alertRepository.save(alert);
 
-        System.out.println("ESCALATE triggered: userId=" + userId + " alertId=" + id + " time=" + java.time.LocalDateTime.now());
+        System.out.println("ESCALATE triggered: userId=" + userId
+                + " alertId=" + id + " time=" + java.time.LocalDateTime.now());
 
-        // Auto notifications: SMS + Email
         try {
             userRepository.findById(userId).ifPresent(user -> {
                 var contacts = contactRepository.findByUserId(userId);
 
+                // 1. Build the Email Body (URLs and strong words are fine here)
                 String mapsLink = "";
                 if (alert.getLatitude() != null && alert.getLongitude() != null) {
                     mapsLink = "Location: https://maps.google.com/?q="
                             + alert.getLatitude() + "," + alert.getLongitude();
                 }
-
-                String smsBody = "EMERGENCY ALERT from Dhairya: " + user.getName()
-                        + " has triggered a safety alert. " + mapsLink
-                        + " Please call them immediately.";
 
                 String emailSubject = "Emergency Alert from " + user.getName();
                 String emailBody = "Dear contact,\n\n"
@@ -115,7 +106,24 @@ public class AlertController {
                         + "Please call them immediately.\n\n"
                         + "- Dhairya Safety App";
 
+                // 2. Build the SMS Body (Neutral, no URLs, to bypass carrier filters)
+                String smsBody = "Dhairya: " + user.getName();
+                if (alert.getLatitude() != null && alert.getLongitude() != null) {
+                    smsBody += " at Lat " + alert.getLatitude() + ", Lng " + alert.getLongitude();
+                }
+
+                boolean first = true;
                 for (var contact : contacts) {
+                    if (!first) {
+                        try {
+                            Thread.sleep(10_000);
+                        } catch (InterruptedException ie) {
+                            Thread.currentThread().interrupt();
+                            break;
+                        }
+                    }
+                    first = false;
+
                     smsService.sendSms(contact.getPhone(), smsBody);
                     if (contact.getEmail() != null && !contact.getEmail().isBlank()) {
                         emailService.sendEmail(contact.getEmail(), emailSubject, emailBody);
@@ -129,7 +137,6 @@ public class AlertController {
         return ResponseEntity.ok(alert);
     }
 
-    // Update location (called periodically from the frontend)
     @PutMapping("/{id}/location")
     public ResponseEntity<Object> updateLocation(@PathVariable("id") Integer id,
                                                  @RequestBody SosRequest req,

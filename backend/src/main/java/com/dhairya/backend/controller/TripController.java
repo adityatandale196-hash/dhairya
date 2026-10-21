@@ -42,7 +42,6 @@ public class TripController {
         this.rateLimiter = rateLimiter;
     }
 
-    // Start a new journey
     @PostMapping
     public ResponseEntity<Object> start(@RequestBody TripRequest req, HttpServletRequest httpReq) {
         Integer userId = (Integer) httpReq.getAttribute("userId");
@@ -82,26 +81,22 @@ public class TripController {
         return ResponseEntity.status(HttpStatus.CREATED).body(tripRepository.save(trip));
     }
 
-    // List all trips of the logged-in user
     @GetMapping
     public List<Trip> list(HttpServletRequest httpReq) {
         Integer userId = (Integer) httpReq.getAttribute("userId");
         return tripRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
-    // Mark trip as safe ("I've reached safely")
     @PutMapping("/{id}/safe")
     public ResponseEntity<Object> markSafe(@PathVariable("id") Integer id, HttpServletRequest httpReq) {
         Integer userId = (Integer) httpReq.getAttribute("userId");
         return updateStatus(id, userId, "SAFE");
     }
 
-    // Mark trip as escalated AND send SMS + email to all trusted contacts
     @PutMapping("/{id}/escalate")
     public ResponseEntity<Object> escalate(@PathVariable("id") Integer id, HttpServletRequest httpReq) {
         Integer userId = (Integer) httpReq.getAttribute("userId");
 
-        // Rate limit
         if (!rateLimiter.allow(userId)) {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(
                     Map.of("success", false, "message", "Please wait before escalating again")
@@ -119,21 +114,16 @@ public class TripController {
 
         System.out.println("ESCALATE triggered: userId=" + userId + " tripId=" + id + " time=" + java.time.LocalDateTime.now());
 
-        // Auto notifications: SMS + Email
         try {
             userRepository.findById(userId).ifPresent(user -> {
                 var contacts = contactRepository.findByUserId(userId);
 
+                // 1. Build Email Body (URLs are safe here)
                 String mapsLink = "";
                 if (trip.getLatitude() != null && trip.getLongitude() != null) {
                     mapsLink = "Last known location: https://maps.google.com/?q="
                             + trip.getLatitude() + "," + trip.getLongitude();
                 }
-
-                String smsBody = "TRAVEL ALERT from Dhairya: " + user.getName()
-                        + " was travelling to " + trip.getDestination()
-                        + " and has not confirmed reaching safely. "
-                        + mapsLink + " Please call them now.";
 
                 String emailSubject = "Travel Alert from " + user.getName();
                 String emailBody = "Dear contact,\n\n"
@@ -143,7 +133,24 @@ public class TripController {
                         + "Please call them now.\n\n"
                         + "- Dhairya Safety App";
 
+                // 2. Build SMS Body (Neutral, no URLs, to bypass carrier filters)
+                String smsBody = "Dhairya: " + user.getName() + " travelling to " + trip.getDestination();
+                if (trip.getLatitude() != null && trip.getLongitude() != null) {
+                    smsBody += ". Lat " + trip.getLatitude() + ", Lng " + trip.getLongitude();
+                }
+
+                boolean first = true;
                 for (var contact : contacts) {
+                    if (!first) {
+                        try {
+                            Thread.sleep(10_000);
+                        } catch (InterruptedException ie) {
+                            Thread.currentThread().interrupt();
+                            break;
+                        }
+                    }
+                    first = false;
+
                     smsService.sendSms(contact.getPhone(), smsBody);
                     if (contact.getEmail() != null && !contact.getEmail().isBlank()) {
                         emailService.sendEmail(contact.getEmail(), emailSubject, emailBody);
@@ -157,7 +164,6 @@ public class TripController {
         return ResponseEntity.ok(trip);
     }
 
-    // Update location (called periodically from the frontend)
     @PutMapping("/{id}/location")
     public ResponseEntity<Object> updateLocation(@PathVariable("id") Integer id,
                                                  @RequestBody TripRequest req,
